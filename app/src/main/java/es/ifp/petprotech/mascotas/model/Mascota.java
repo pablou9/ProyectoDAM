@@ -1,6 +1,7 @@
 package es.ifp.petprotech.mascotas.model;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import es.ifp.petprotech.bd.Entidad;
 
@@ -57,18 +58,27 @@ public class Mascota extends Entidad {
     public String getNombre() {
         return nombre;
     }
+
     public String getEspecie() {
         return especie;
     }
+
     public String getFamilia() {
         return familia;
     }
+
     public String getRaza() {
         return raza;
     }
+
     public LocalDateTime getFechaNacimiento() {
         return fechaNacimiento;
     }
+
+    public long getEdad() {
+        return ChronoUnit.YEARS.between(fechaNacimiento, LocalDateTime.now());
+    }
+
     public String getNumeroChip() {
         return numeroChip;
     }
