@@ -30,11 +30,11 @@ public class MascotaTest {
     @Test
     public void crearMascotaSinParametrosObligatorios_lanzaExcepcion() {
 
-        Consumer<Mascota.Builder> assertion = builder ->
+        Consumer<Mascota.Builder> assertThrows = builder ->
                 Assert.assertThrows(IllegalArgumentException.class, builder::build);
 
-        mockBuilding(assertion,
-                //sin nombre
+        mockCreacion(assertThrows,
+                // sin nombre
                 () -> Mascota.nuevaMascota().especie("e").familia("f").fechaNacimiento(LocalDateTime.now()).chip(CHIP),
                 builder -> builder.nombre(null),
                 builder -> builder.nombre(""),
@@ -68,12 +68,18 @@ public class MascotaTest {
             () -> builderValido().fechaNacimiento(LocalDateTime.now().plusDays(1)).build());
     }
 
+    @SafeVarargs
+    private void mockCreacion(
+            Consumer<Mascota.Builder> assertThrows,
+            Supplier<Mascota.Builder> primerPaso,
+            Function<Mascota.Builder, Mascota.Builder>... pasos)
+    {
         Mascota.Builder builder = primerPaso.get();
-        assertion.accept(builder);
+        assertThrows.accept(builder);
 
         for (Function<Mascota.Builder,Mascota.Builder> paso : pasos) {
             builder = paso.apply(builder);
-            assertion.accept(builder);
+            assertThrows.accept(builder);
         }
     }
 
