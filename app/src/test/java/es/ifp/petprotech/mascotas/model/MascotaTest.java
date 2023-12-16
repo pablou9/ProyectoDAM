@@ -16,15 +16,7 @@ public class MascotaTest {
     @Test
     public void crearUnaMascotaConParametrosCorrectos() {
         LocalDateTime now = LocalDateTime.now();
-        Mascota mascota = Mascota
-                .nuevaMascota()
-                .nombre("nombre")
-                .fechaNacimiento(now)
-                .familia("familia")
-                .especie("especie")
-                .raza("raza")
-                .chip(CHIP)
-                .build();
+        Mascota mascota = builderValido(now).build();
 
         Assert.assertEquals(mascota.getNombre(), "nombre");
         Assert.assertEquals(mascota.getFechaNacimiento(), now);
@@ -84,8 +76,17 @@ public class MascotaTest {
     }
 
     private Mascota.Builder builderValido() {
-        return Mascota.nuevaMascota()
-                .familia("familia")
-                .especie("especie");
+        return builderValido(LocalDateTime.now());
+    }
+
+    private Mascota.Builder builderValido(LocalDateTime now) {
+        return Mascota
+            .nuevaMascota()
+            .nombre("nombre")
+            .fechaNacimiento(now)
+            .familia("familia")
+            .especie("especie")
+            .raza("raza")
+            .chip(CHIP);
     }
 }
