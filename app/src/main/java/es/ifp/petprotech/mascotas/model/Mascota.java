@@ -1,6 +1,10 @@
 package es.ifp.petprotech.mascotas.model;
 
-public class Mascota {
+import java.time.LocalDateTime;
+
+import es.ifp.petprotech.bd.Entidad;
+
+public class Mascota extends Entidad {
 
     public static final int DIGITOS_NUMERO_CHIP = 15;
 
@@ -8,7 +12,7 @@ public class Mascota {
     private final String especie;
     private final String familia;
     private final String raza;
-    private final int edad;
+    private final LocalDateTime fechaNacimiento;
     private final String numeroChip;
 
     public static Builder nuevaMascota() {
@@ -22,7 +26,7 @@ public class Mascota {
         especie = builder.especie;
         familia = builder.familia;
         raza = builder.raza;
-        edad = builder.edad;
+        fechaNacimiento = builder.fechaNacimiento;
         numeroChip = builder.numeroChip;
     }
 
@@ -36,7 +40,7 @@ public class Mascota {
         if (isEmpty(builder.familia))
             throw new IllegalArgumentException("Debes introducir una familia");
 
-        if (builder.edad < 0)
+        if (builder.fechaNacimiento == null)
             throw new IllegalArgumentException("Debes introducir una edad y no puede ser menor a 0");
 
         if (isEmpty(builder.numeroChip))
@@ -62,8 +66,8 @@ public class Mascota {
     public String getRaza() {
         return raza;
     }
-    public int getEdad() {
-        return edad;
+    public LocalDateTime getFechaNacimiento() {
+        return fechaNacimiento;
     }
     public String getNumeroChip() {
         return numeroChip;
@@ -74,7 +78,7 @@ public class Mascota {
         private String especie;
         private String familia;
         private String raza;
-        private int edad = -1;
+        private LocalDateTime fechaNacimiento;
         private String numeroChip;
 
         public Builder nombre(String nombre) {
@@ -93,8 +97,8 @@ public class Mascota {
             this.raza = raza;
             return this;
         }
-        public Builder edad(int edad) {
-            this.edad = edad;
+        public Builder fechaNacimiento(LocalDateTime fechaNacimiento) {
+            this.fechaNacimiento = fechaNacimiento;
             return this;
         }
         public Builder chip(String numeroChip) {
