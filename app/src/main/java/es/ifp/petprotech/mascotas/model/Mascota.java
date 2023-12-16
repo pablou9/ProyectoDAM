@@ -44,6 +44,9 @@ public class Mascota extends Entidad {
         if (builder.fechaNacimiento == null)
             throw new IllegalArgumentException("Debes introducir una edad y no puede ser menor a 0");
 
+        if (builder.fechaNacimiento.isAfter(LocalDateTime.now()))
+            throw new IllegalArgumentException("La fecha de nacimiento no puede ser en el futuro");
+
         if (isEmpty(builder.numeroChip))
             throw new IllegalArgumentException("Debes introducir un número de chip");
 

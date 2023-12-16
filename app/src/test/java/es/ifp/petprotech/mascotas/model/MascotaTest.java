@@ -62,10 +62,11 @@ public class MascotaTest {
                 () -> builderValido().chip("123456789").build());
     }
 
-    private void mockBuilding(
-            Consumer<Mascota.Builder> assertion,
-            Supplier<Mascota.Builder> primerPaso,
-            Function<Mascota.Builder, Mascota.Builder>... pasos) {
+    @Test
+    public void crearMascotaConFechaDeNacimientoEnElFuturo_lanzaExcepcion() {
+        Assert.assertThrows(IllegalArgumentException.class,
+            () -> builderValido().fechaNacimiento(LocalDateTime.now().plusDays(1)).build());
+    }
 
         Mascota.Builder builder = primerPaso.get();
         assertion.accept(builder);
