@@ -58,7 +58,8 @@ public class MascotaTest {
     @Test
     public void crearMascotaConChipInvalido_lanzaExcepcion() {
         Assert.assertThrows(IllegalArgumentException.class,
-                () -> builderValido().fechaNacimiento(LocalDateTime.now()).build());
+                /* Chip invalido. El numero de chip debe tener 15 digitos */
+                () -> builderValido().chip("123456789").build());
     }
 
     private void mockBuilding(
