@@ -1,6 +1,7 @@
 package es.ifp.petprotech.mascotas.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import es.ifp.petprotech.R;
+import es.ifp.petprotech.mascotas.viewmodels.AnadirMascotaViewModel;
 import es.ifp.petprotech.viewmodels.ViewModelsInitializers;
 
 public class AnadirMascotaActivity extends AppCompatActivity {
@@ -19,6 +21,8 @@ public class AnadirMascotaActivity extends AppCompatActivity {
     private ImageView reptil;
     private ImageView otro;
 
+    private AnadirMascotaViewModel viewModel;
+
     @Override
     @SuppressLint("ClickableViewAccessibility")
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,7 @@ public class AnadirMascotaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ViewModelsInitializers.init(this);
+        viewModel = initViewModel();
 
         perro = findViewById(R.id.perro_icon);
         gato = findViewById(R.id.gato_icon);
@@ -33,8 +38,6 @@ public class AnadirMascotaActivity extends AppCompatActivity {
         pajaro = findViewById(R.id.ave_icon);
         reptil = findViewById(R.id.reptil_icon);
         otro = findViewById(R.id.otro_icon);
-
-        Log.d("Main", "onCreate: here");
 
         perro.setOnClickListener((view) -> {
             Log.d("Main", "onCreate: doggie touched!!");
@@ -47,4 +50,11 @@ public class AnadirMascotaActivity extends AppCompatActivity {
         ViewModelsInitializers.cerrar();
     }
 
+    private AnadirMascotaViewModel initViewModel() {
+        return new ViewModelProvider(this,
+            ViewModelProvider.Factory.from(
+                ViewModelsInitializers
+                    .inicializadorParaModelo(ViewModelsInitializers.Modelo.MASCOTA)))
+            .get(AnadirMascotaViewModel.class);
+    }
 }

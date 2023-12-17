@@ -86,6 +86,18 @@ public class Mascota extends Entidad {
         return numeroChip;
     }
 
+    @Override
+    public String toString() {
+        return "Mascota{" +
+            "nombre='" + nombre + '\'' +
+            ", especie='" + especie + '\'' +
+            ", familia='" + familia + '\'' +
+            ", raza='" + raza + '\'' +
+            ", fechaNacimiento=" + fechaNacimiento +
+            ", numeroChip='" + numeroChip + '\'' +
+            '}';
+    }
+
     public static class Builder {
         private String nombre;
         private String especie;
