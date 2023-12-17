@@ -10,13 +10,13 @@ import es.ifp.petprotech.mascotas.model.Mascota;
 import es.ifp.petprotech.mascotas.model.MascotasRepositorio;
 import es.ifp.petprotech.veterinarios.model.Veterinario;
 
-public class AnadirMascotaViewModel extends ViewModel {
+public class MascotasViewModel extends ViewModel {
 
-    private static final String TAG = "AnadirMascotaViewModel";
+    private static final String TAG = "MascotasViewModel";
 
     private MascotasRepositorio repositorio;
 
-    public AnadirMascotaViewModel(MascotasRepositorio repositorio) {
+    public MascotasViewModel(MascotasRepositorio repositorio) {
         this.repositorio = repositorio;
     }
 

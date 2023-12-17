@@ -9,8 +9,8 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import es.ifp.petprotech.R;
-import es.ifp.petprotech.mascotas.viewmodels.AnadirMascotaViewModel;
-import es.ifp.petprotech.viewmodels.ViewModelsInitializers;
+import es.ifp.petprotech.mascotas.viewmodels.MascotasViewModel;
+import es.ifp.petprotech.app.ViewModelsInitializers;
 
 public class AnadirMascotaActivity extends AppCompatActivity {
 
@@ -21,7 +21,7 @@ public class AnadirMascotaActivity extends AppCompatActivity {
     private ImageView reptil;
     private ImageView otro;
 
-    private AnadirMascotaViewModel viewModel;
+    private MascotasViewModel viewModel;
 
     @Override
     @SuppressLint("ClickableViewAccessibility")
@@ -50,11 +50,11 @@ public class AnadirMascotaActivity extends AppCompatActivity {
         ViewModelsInitializers.cerrar();
     }
 
-    private AnadirMascotaViewModel initViewModel() {
+    private MascotasViewModel initViewModel() {
         return new ViewModelProvider(this,
             ViewModelProvider.Factory.from(
                 ViewModelsInitializers
                     .inicializadorParaModelo(ViewModelsInitializers.Modelo.MASCOTA)))
-            .get(AnadirMascotaViewModel.class);
+            .get(MascotasViewModel.class);
     }
 }
