@@ -13,8 +13,8 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
     private final SQLiteDatabase baseDeDatos;
     private final String tabla;
 
-    public RepositorioSQLite(SQLiteDatabase baseDeDatos, String tabla) {
-        this.baseDeDatos = baseDeDatos;
+    public RepositorioSQLite(BaseDeDatos<SQLiteDatabase> baseDeDatos, String tabla) {
+        this.baseDeDatos = baseDeDatos.conectar();
         this.tabla = tabla;
     }
 
