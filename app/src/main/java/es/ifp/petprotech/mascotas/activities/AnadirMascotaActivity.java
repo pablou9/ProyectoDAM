@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import es.ifp.petprotech.R;
+import es.ifp.petprotech.viewmodels.ViewModelsInitializers;
 
 public class AnadirMascotaActivity extends AppCompatActivity {
 
@@ -24,6 +25,8 @@ public class AnadirMascotaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ViewModelsInitializers.init(this);
+
         perro = findViewById(R.id.perro_icon);
         gato = findViewById(R.id.gato_icon);
         roedor = findViewById(R.id.hamster_icon);
@@ -37,4 +40,11 @@ public class AnadirMascotaActivity extends AppCompatActivity {
             Log.d("Main", "onCreate: doggie touched!!");
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ViewModelsInitializers.cerrar();
+    }
+
 }
