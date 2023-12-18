@@ -2,10 +2,10 @@ package es.ifp.petprotech.mascotas.datos;
 
 import android.provider.BaseColumns;
 
-public class ContratoMascota {
+public class ContratoMascotas {
 
     /* no instanciable */
-    private ContratoMascota() {}
+    private ContratoMascotas() {}
 
     public static final String NOMBRE_TABLA = "mascotas";
 
@@ -19,7 +19,7 @@ public class ContratoMascota {
         public static final String CHIP = "chip";
     }
 
-    public static final String CREAR_TABLA_MASCOTAS =
+    public static final String CREAR_TABLA =
         "CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " ( " +
             Columnas._ID + " INTEGER PRIMARY KEY NOT NULL, " +
             Columnas.NOMBRE + " TEXT NOT NULL " +
@@ -29,6 +29,6 @@ public class ContratoMascota {
             Columnas.RAZA + " TEXT " +
             Columnas.CHIP + " TEXT UNIQUE)";
 
-    public static final String ELIMINAR_TABLA_MASCOTAS =
+    public static final String ELIMINAR_TABLA =
         "DROP TABLE IF EXISTS " + NOMBRE_TABLA;
 }

@@ -6,9 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import es.ifp.petprotech.bd.BaseDeDatos;
 import es.ifp.petprotech.bd.RepositorioSQLite;
-import es.ifp.petprotech.mascotas.datos.ContratoMascota;
+import es.ifp.petprotech.mascotas.datos.ContratoMascotas;
 
-import static es.ifp.petprotech.mascotas.datos.ContratoMascota.*;
+import static es.ifp.petprotech.mascotas.datos.ContratoMascotas.*;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ import java.time.ZoneId;
 public class MascotasRepositorio extends RepositorioSQLite<Mascota> {
 
     public MascotasRepositorio(BaseDeDatos<SQLiteDatabase> baseDeDatos) {
-        super(baseDeDatos, ContratoMascota.NOMBRE_TABLA);
+        super(baseDeDatos, ContratoMascotas.NOMBRE_TABLA);
     }
 
     @Override
