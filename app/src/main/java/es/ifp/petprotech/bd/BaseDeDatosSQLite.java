@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import es.ifp.petprotech.bd.migraciones.Creacion_19_12_23;
+
 public class BaseDeDatosSQLite implements BaseDeDatos<SQLiteDatabase> {
 
     private static final String NOMBRE_BASE_DE_DATOS = "PetProtech.db";
@@ -40,7 +42,7 @@ public class BaseDeDatosSQLite implements BaseDeDatos<SQLiteDatabase> {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            // TODO Create tables
+            Creacion_19_12_23.ejecutar(db);
         }
 
         @Override
@@ -51,6 +53,7 @@ public class BaseDeDatosSQLite implements BaseDeDatos<SQLiteDatabase> {
         @Override
         public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             super.onDowngrade(db, oldVersion, newVersion);
+
         }
     }
 }
