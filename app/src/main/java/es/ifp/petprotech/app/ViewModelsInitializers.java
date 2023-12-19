@@ -37,9 +37,6 @@ public class ViewModelsInitializers {
 
     static final ViewModelInitializer<MascotasViewModel> mascotas = new ViewModelInitializer<>(
         MascotasViewModel.class,
-        creationExtras -> {
-            MascotasRepositorio repositorio = new MascotasRepositorio(baseDeDatos);
-            return new MascotasViewModel(repositorio);
-        }
+        creationExtras -> new MascotasViewModel(new MascotasRepositorio(baseDeDatos))
     );
 }
