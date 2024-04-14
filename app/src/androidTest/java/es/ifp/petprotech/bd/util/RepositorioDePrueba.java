@@ -1,12 +1,15 @@
-package es.ifp.petprotech.bd;
+package es.ifp.petprotech.bd.util;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import es.ifp.petprotech.bd.BaseDeDatos;
+import es.ifp.petprotech.bd.RepositorioSQLite;
+
 public class RepositorioDePrueba extends RepositorioSQLite<EntidadDePrueba> {
 
-    public RepositorioDePrueba(SQLiteDatabase baseDeDatos) {
+    public RepositorioDePrueba(BaseDeDatos<SQLiteDatabase> baseDeDatos) {
         super(baseDeDatos, ContratoDePrueba.NOMBRE_TABLA);
     }
 

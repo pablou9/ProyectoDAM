@@ -1,4 +1,4 @@
-package es.ifp.petprotech.bd;
+package es.ifp.petprotech.bd.util;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

@@ -1,23 +1,26 @@
-package es.ifp.petprotech.bd;
+package es.ifp.petprotech.bd.util;
 
 import java.util.Objects;
 
+import es.ifp.petprotech.bd.Entidad;
+
 public class EntidadDePrueba extends Entidad {
 
-    private long id;
     private String nombre;
     private int edad;
     private boolean prueba;
 
     public EntidadDePrueba(long id, String nombre, int edad, boolean prueba) {
-        this.id = id;
+        super(id);
         this.nombre = nombre;
         this.edad = edad;
         this.prueba = prueba;
     }
 
     public EntidadDePrueba(String nombre, int edad, boolean prueba) {
-        this(0, nombre, edad, prueba);
+        this.nombre = nombre;
+        this.edad = edad;
+        this.prueba = prueba;
     }
 
     public String getNombre() {
@@ -55,7 +58,7 @@ public class EntidadDePrueba extends Entidad {
     @Override
     public String toString() {
         return "EntidadDePrueba{" +
-            "id=" + id +
+            "id=" + getId() +
             ", nombre='" + nombre + '\'' +
             ", edad=" + edad +
             ", prueba=" + prueba +
