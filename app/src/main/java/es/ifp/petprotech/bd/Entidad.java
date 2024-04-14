@@ -3,6 +3,13 @@ package es.ifp.petprotech.bd;
 public abstract class Entidad {
 
     private long id;
+
+    public Entidad() {}
+
+    public Entidad(long id) {
+        setId(id);
+    }
+
     public final long getId() {
         return id;
     }
@@ -11,7 +18,7 @@ public abstract class Entidad {
             throw new IllegalArgumentException("Valor de id invalido: " + id);
 
         if (this.id > 0)
-            throw new IllegalArgumentException("Esta entidad ya tiene un valor de id asignado");
+            throw new IllegalStateException("Esta entidad ya tiene un valor de id asignado");
 
         this.id = id;
     }

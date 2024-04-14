@@ -3,7 +3,6 @@ package es.ifp.petprotech.bd;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -15,6 +14,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import es.ifp.petprotech.bd.util.ContratoDePrueba;
+import es.ifp.petprotech.bd.util.EntidadDePrueba;
+import es.ifp.petprotech.bd.util.GestorDeBaseDeDatosPrueba;
+import es.ifp.petprotech.bd.util.RepositorioDePrueba;
 
 @RunWith(AndroidJUnit4.class)
 public class RepositorioTest {
@@ -30,7 +34,7 @@ public class RepositorioTest {
         Context context = ApplicationProvider.getApplicationContext();
         gestorBaseDeDatos = new GestorDeBaseDeDatosPrueba(context, DATABASE_NAME);
         bd = gestorBaseDeDatos.getWritableDatabase();
-        repositorio = new RepositorioDePrueba(bd);
+        repositorio = new RepositorioDePrueba(new BaseDeDatosDePrueba(bd));
     }
 
     @After
@@ -57,7 +61,10 @@ public class RepositorioTest {
 
     @Test
     public void seleccionarEntidadPorSuId_regresaLaEntidad() {
-        long idGenerada = insertarPrueba();
+        EntidadDePrueba entidadDePrueba = new EntidadDePrueba("Prueba", 25, true);
+        repositorio.crear(entidadDePrueba);
+
+        long idGenerada = entidadDePrueba.getId();
         EntidadDePrueba entidad = repositorio.seleccionarConId(idGenerada);
 
         Assert.assertNotNull(entidad);
@@ -98,7 +105,7 @@ public class RepositorioTest {
     }
 
     @Test
-    public void insertarUnaEntidadConUnValorDeId_lanzaExcepcion() {
+    public void insertarUnaEntidadConId_lanzaExcepcion() {
         EntidadDePrueba entidad = entidadDePrueba();
         entidad.setId(1);
         Assert.assertThrows(IllegalArgumentException.class, () -> repositorio.crear(entidad));
@@ -182,6 +189,25 @@ public class RepositorioTest {
 
         EntidadDePrueba enBaseDeDatos = repositorio.seleccionarConId(entidad.getId());
         Assert.assertNull(enBaseDeDatos);
+    }
+
+    private static final class BaseDeDatosDePrueba implements BaseDeDatos<SQLiteDatabase> {
+
+        private final SQLiteDatabase baseDeDatos;
+
+        public BaseDeDatosDePrueba(SQLiteDatabase baseDeDatos) {
+            this.baseDeDatos = baseDeDatos;
+        }
+
+        @Override
+        public SQLiteDatabase conectar() {
+            return baseDeDatos;
+        }
+
+        @Override
+        public void desconectar() {
+
+        }
     }
 }
 

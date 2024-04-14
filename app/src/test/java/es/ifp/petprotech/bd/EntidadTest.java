@@ -5,19 +5,28 @@ import org.junit.Test;
 
 public class EntidadTest {
 
-    private static class EntidadImplPrueba extends Entidad {}
+    @Test
+    public void crearUnaEntidadConIdMenorQueUno_lanzaExcepcion() {
+        Assert.assertThrows(IllegalArgumentException.class, () -> new PruebaEntidad(0));
+    }
 
     @Test
     public void asignarUnaIdMenorQueUno_lanzaExcepcion() {
-        Entidad entidad = new EntidadImplPrueba();
+        PruebaEntidad entidad = new PruebaEntidad();
         Assert.assertThrows(IllegalArgumentException.class, () -> entidad.setId(0));
     }
 
     @Test
     public void asignarUnaIdAUnaEntidadConIdPreviamienteAsignada_lanzaExcepcion() {
-        Entidad entidad = new EntidadImplPrueba();
-        entidad.setId(1);
+        PruebaEntidad entidad = new PruebaEntidad(1);
+        Assert.assertThrows(IllegalStateException.class, () -> entidad.setId(2));
+    }
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> entidad.setId(2));
+    private static final class PruebaEntidad extends Entidad {
+        public PruebaEntidad() {}
+
+        public PruebaEntidad(long id) {
+            super(id);
+        }
     }
 }
