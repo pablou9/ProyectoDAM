@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">PetProtech</string>
+    <string name="perro">Perro</string>
+    <string name="gato">Gato</string>
+    <string name="pajaro">Pájaro</string>
+    <string name="roedor">Roedor</string>
+    <string name="reptil">Reptil</string>
+    <string name="otro">Otro</string>
+    <string name="raza_o_especie">Raza o especie</string>
+    <string name="nombre">Nombre</string>
+    <string name="edad">Edad</string>
+    <string name="numero_chip">Número de chip</string>
+    <string name="veterinario_preferido">Veterinario de preferencia</string>
+    <string name="anadir_mascota">Añadir Mascota</string>
 </resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PetProtech</string>
+    <string name="perro">Dog</string>
+    <string name="gato">Cat</string>
+    <string name="pajaro">Bird</string>
+    <string name="roedor">Rodent</string>
+    <string name="reptil">Reptile</string>
+    <string name="otro">Other</string>
+    <string name="raza_o_especie">Breed or species</string>
+    <string name="nombre">Name</string>
+    <string name="edad">Age</string>
+    <string name="numero_chip">Chip number</string>
+    <string name="veterinario_preferido">Favourite Vet</string>
+    <string name="anadir_mascota">Add Pet</string>
+</resources>
