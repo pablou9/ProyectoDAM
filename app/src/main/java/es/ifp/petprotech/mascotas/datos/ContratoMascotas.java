@@ -22,11 +22,11 @@ public class ContratoMascotas {
     public static final String CREAR_TABLA =
         "CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " ( " +
             Columnas._ID + " INTEGER PRIMARY KEY NOT NULL, " +
-            Columnas.NOMBRE + " TEXT NOT NULL " +
-            Columnas.FECHA_NACIMIENTO + " INTEGER NOT NULL " +
-            Columnas.FAMILIA + " TEXT NOT NULL " +
-            Columnas.ESPECIE + " TEXT NOT NULL " +
-            Columnas.RAZA + " TEXT " +
+            Columnas.NOMBRE + " TEXT NOT NULL, " +
+            Columnas.FECHA_NACIMIENTO + " INTEGER NOT NULL, " +
+            Columnas.FAMILIA + " TEXT NOT NULL, " +
+            Columnas.ESPECIE + " TEXT NOT NULL, " +
+            Columnas.RAZA + " TEXT, " +
             Columnas.CHIP + " TEXT UNIQUE)";
 
     public static final String ELIMINAR_TABLA =

@@ -17,7 +17,7 @@ public class ContratoHorariosProfesionales {
     public static final String CREAR_TABLA =
         "CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " ( " +
             Columnas._ID + " INTEGER PRIMARY KEY NOT NULL, " +
-            Columnas.ID_HORARIO + " INTEGER NOT NULL " +
+            Columnas.ID_HORARIO + " INTEGER NOT NULL, " +
             Columnas.ID_PROFESIONAL + " INTEGER NOT NULL)";
 
     public static final String ELIMINAR_TABLA =

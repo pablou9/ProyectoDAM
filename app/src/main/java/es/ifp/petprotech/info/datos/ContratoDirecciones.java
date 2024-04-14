@@ -23,13 +23,13 @@ public class ContratoDirecciones {
     public static final String CREAR_TABLA =
         "CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " ( " +
             Columnas._ID + " INTEGER PRIMARY KEY NOT NULL, " +
-            Columnas.CALLE + " TEXT NOT NULL " +
-            Columnas.NUMERO + " INTEGER NOT NULL " +
-            Columnas.ESCALERA + " TEXT " +
-            Columnas.PLANTA + " TEXT " +
-            Columnas.PUERTA + " TEXT " +
-            Columnas.CODIGO_POSTAL + " TEXT NOT NULL " +
-            Columnas.CIUDAD + " TEXT NOT NULL " +
+            Columnas.CALLE + " TEXT NOT NULL, " +
+            Columnas.NUMERO + " INTEGER NOT NULL, " +
+            Columnas.ESCALERA + " TEXT, " +
+            Columnas.PLANTA + " TEXT, " +
+            Columnas.PUERTA + " TEXT, " +
+            Columnas.CODIGO_POSTAL + " TEXT NOT NULL, " +
+            Columnas.CIUDAD + " TEXT NOT NULL, " +
             Columnas.PROVINCIA + " TEXT NOT NULL)";
 
     public static final String ELIMINAR_TABLA =

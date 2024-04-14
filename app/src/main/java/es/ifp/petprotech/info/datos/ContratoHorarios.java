@@ -21,11 +21,11 @@ public class ContratoHorarios {
     public static final String CREAR_TABLA =
         "CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " ( " +
             Columnas._ID + " INTEGER PRIMARY KEY NOT NULL, " +
-            Columnas.DIA_SEMANA + " INTEGER CHECK (" + Columnas.DIA_SEMANA + ") IN (1,2,3,4,5,6,7)" +
-            Columnas.LABORAL + " BOOLEAN DEFAULT TRUE " +
-            Columnas.FESTIVO + " BOOLEAN DEFAULT FALSE " +
-            Columnas.APERTURA + " INTEGER NOT NULL " +
-            Columnas.CIERRE + " INTEGER NOT NULL " +
+            Columnas.DIA_SEMANA + " INTEGER CHECK (" + Columnas.DIA_SEMANA + " IN (1,2,3,4,5,6,7)), " +
+            Columnas.LABORAL + " BOOLEAN DEFAULT TRUE, " +
+            Columnas.FESTIVO + " BOOLEAN DEFAULT FALSE, " +
+            Columnas.APERTURA + " INTEGER NOT NULL, " +
+            Columnas.CIERRE + " INTEGER NOT NULL, " +
             Columnas.DESCANSO + " INTEGER NOT NULL)";
 
     public static final String ELIMINAR_TABLA =

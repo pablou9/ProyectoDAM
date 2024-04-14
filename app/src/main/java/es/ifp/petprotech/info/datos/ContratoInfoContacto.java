@@ -19,9 +19,9 @@ public class ContratoInfoContacto {
     public static final String CREAR_TABLA =
         "CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " ( " +
             Columnas._ID + " INTEGER PRIMARY KEY NOT NULL, " +
-            Columnas.PAGINA_WEB + " TEXT " +
-            Columnas.EMAIL + " TEXT " +
-            Columnas.TELEFONO_FIJO + " TEXT " +
+            Columnas.PAGINA_WEB + " TEXT, " +
+            Columnas.EMAIL + " TEXT, " +
+            Columnas.TELEFONO_FIJO + " TEXT, " +
             Columnas.TELEFONO_MOVIL + " TEXT)";
 
     public static final String ELIMINAR_TABLA =

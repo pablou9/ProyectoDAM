@@ -17,7 +17,7 @@ public class ContratoEspecialidades {
     public static final String CREAR_TABLA =
         "CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " ( " +
             Columnas._ID + " INTEGER PRIMARY KEY NOT NULL, " +
-            Columnas.NOMBRE + " TEXT NOT NULL " +
+            Columnas.NOMBRE + " TEXT NOT NULL, " +
             Columnas.SUBESPECIALIDAD + " INTEGER)";
 
     public static final String ELIMINAR_TABLA =

@@ -15,7 +15,7 @@ public class ContratoDePrueba {
     public static final String CREAR_TABLA =
         "CREATE TABLE " + NOMBRE_TABLA + " ( " +
             Columnas._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            Columnas.NOMBRE + " TEXT NOT NULL UNIQUE, " +
+            Columnas.NOMBRE + " TEXT NOT NULL, UNIQUE, " +
             Columnas.EDAD + " INTEGER NOT NULL, " +
             Columnas.PRUEBA + " BOOLEAN DEFAULT TRUE)";
 
