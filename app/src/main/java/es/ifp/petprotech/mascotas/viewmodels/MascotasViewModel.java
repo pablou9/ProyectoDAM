@@ -2,6 +2,8 @@ package es.ifp.petprotech.mascotas.viewmodels;
 
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.time.LocalDateTime;
@@ -15,6 +17,14 @@ public class MascotasViewModel extends ViewModel {
 
     private static final String TAG = "MascotasViewModel";
 
+    public enum TipoMascota {
+        PERRO,
+        GATO,
+        REPTIL,
+        ROEDOR,
+        OTRO,
+    }
+
     private Repositorio<Mascota> repositorio;
 
     public MascotasViewModel(MascotasRepositorio repositorio) {
@@ -23,6 +33,11 @@ public class MascotasViewModel extends ViewModel {
 
     private Mascota.Builder builder;
     private Veterinario veterinario;
+    private MutableLiveData<TipoMascota> tipoMascota = new MutableLiveData<>();
+
+    public void tipoMascotaSeleccionado(TipoMascota tipo) {
+        tipoMascota.postValue(tipo);
+    }
 
     public void anadirMascota(String nombre,
                               LocalDateTime fechaNacimiento,
@@ -42,4 +57,6 @@ public class MascotasViewModel extends ViewModel {
 
         Log.d(TAG, "anadirMascota: anadiendo mascota: " + mascota);
     }
+
+
 }

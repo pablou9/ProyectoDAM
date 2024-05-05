@@ -10,7 +10,8 @@ import android.widget.ImageView;
 
 import es.ifp.petprotech.R;
 import es.ifp.petprotech.mascotas.viewmodels.MascotasViewModel;
-import es.ifp.petprotech.app.ViewModelsInitializers;
+
+import static es.ifp.petprotech.app.PetProtechApp.Modelo.*;
 
 public class AnadirMascotaActivity extends AppCompatActivity {
 
@@ -27,34 +28,20 @@ public class AnadirMascotaActivity extends AppCompatActivity {
     @SuppressLint("ClickableViewAccessibility")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_anadir_mascota);
 
-        ViewModelsInitializers.init(this);
-        viewModel = initViewModel();
+        viewModel = new ViewModelProvider(this, MASCOTA.getFabricaViewModel()).get(MascotasViewModel.class);
 
         perro = findViewById(R.id.perro_icon);
         gato = findViewById(R.id.gato_icon);
-        roedor = findViewById(R.id.hamster_icon);
+        roedor = findViewById(R.id.roedor_icon);
         pajaro = findViewById(R.id.ave_icon);
         reptil = findViewById(R.id.reptil_icon);
         otro = findViewById(R.id.otro_icon);
 
         perro.setOnClickListener((view) -> {
             Log.d("Main", "onCreate: doggie touched!!");
+
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ViewModelsInitializers.cerrar();
-    }
-
-    private MascotasViewModel initViewModel() {
-        return new ViewModelProvider(this,
-            ViewModelProvider.Factory.from(
-                ViewModelsInitializers
-                    .inicializadorParaModelo(ViewModelsInitializers.Modelo.MASCOTA)))
-            .get(MascotasViewModel.class);
     }
 }

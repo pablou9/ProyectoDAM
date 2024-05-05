@@ -27,13 +27,14 @@
         app:layout_constraintTop_toBottomOf="@+id/reptil_icon" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
+        android:id="@+id/razaEspecie"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout2"
+        android:enabled="false"
+        app:layout_constraintBottom_toTopOf="@+id/nombre"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,44 +53,40 @@
         android:layout_height="46dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
+        app:layout_constraintBottom_toTopOf="@+id/razaEspecie"
         app:layout_constraintEnd_toStartOf="@+id/gato_icon"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="spread"
-        app:srcCompat="@drawable/dog"
-        android:contentDescription="@string/perro" />
+        app:srcCompat="@drawable/dog" />
 
     <ImageView
         android:id="@+id/gato_icon"
         android:layout_width="46dp"
         android:layout_height="46dp"
-        app:layout_constraintEnd_toStartOf="@+id/hamster_icon"
+        app:layout_constraintEnd_toStartOf="@+id/roedor_icon"
         app:layout_constraintStart_toEndOf="@+id/perro_icon"
         app:layout_constraintTop_toTopOf="@+id/perro_icon"
-        app:srcCompat="@drawable/kitty"
-        android:contentDescription="@string/gato" />
+        app:srcCompat="@drawable/kitty" />
 
     <ImageView
-        android:id="@+id/hamster_icon"
+        android:id="@+id/roedor_icon"
         android:layout_width="46dp"
         android:layout_height="46dp"
         app:layout_constraintEnd_toStartOf="@+id/ave_icon"
         app:layout_constraintStart_toEndOf="@+id/gato_icon"
         app:layout_constraintTop_toTopOf="@+id/gato_icon"
-        app:srcCompat="@drawable/hamster"
-        android:contentDescription="@string/roedor"/>
+        app:srcCompat="@drawable/hamster" />
 
     <ImageView
         android:id="@+id/ave_icon"
         android:layout_width="46dp"
         android:layout_height="46dp"
         app:layout_constraintEnd_toStartOf="@+id/reptil_icon"
-        app:layout_constraintStart_toEndOf="@+id/hamster_icon"
-        app:layout_constraintTop_toTopOf="@+id/hamster_icon"
-        app:srcCompat="@drawable/bird"
-        android:contentDescription="@string/pajaro"/>
+        app:layout_constraintStart_toEndOf="@+id/roedor_icon"
+        app:layout_constraintTop_toTopOf="@+id/roedor_icon"
+        app:srcCompat="@drawable/bird" />
 
     <ImageView
         android:id="@+id/reptil_icon"
@@ -98,8 +95,7 @@
         app:layout_constraintEnd_toStartOf="@+id/otro_icon"
         app:layout_constraintStart_toEndOf="@+id/ave_icon"
         app:layout_constraintTop_toTopOf="@+id/ave_icon"
-        app:srcCompat="@drawable/chameleon"
-        android:contentDescription="@string/reptil"/>
+        app:srcCompat="@drawable/chameleon" />
 
     <ImageView
         android:id="@+id/otro_icon"
@@ -109,14 +105,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/reptil_icon"
         app:layout_constraintTop_toTopOf="@+id/reptil_icon"
-        app:srcCompat="@drawable/circle"
-        android:contentDescription="@string/otro" />
+        app:srcCompat="@drawable/circle" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/perro"
+        android:text="Perro"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="@+id/perro_icon"
         app:layout_constraintStart_toStartOf="@+id/perro_icon"
@@ -126,7 +121,7 @@
         android:id="@+id/textView2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/gato"
+        android:text="Gato"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="@+id/gato_icon"
         app:layout_constraintHorizontal_bias="1.0"
@@ -137,18 +132,18 @@
         android:id="@+id/textView3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/roedor"
+        android:text="Roedor"
         android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@+id/hamster_icon"
+        app:layout_constraintEnd_toEndOf="@+id/roedor_icon"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/hamster_icon"
-        app:layout_constraintTop_toBottomOf="@+id/hamster_icon" />
+        app:layout_constraintStart_toStartOf="@+id/roedor_icon"
+        app:layout_constraintTop_toBottomOf="@+id/roedor_icon" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/pajaro"
+        android:text="Pájaro"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="@+id/ave_icon"
         app:layout_constraintHorizontal_bias="0.0"
@@ -196,83 +191,88 @@
         app:srcCompat="@drawable/goat" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout2"
+        android:id="@+id/nombre"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout4"
-        app:layout_constraintEnd_toStartOf="@+id/textInputLayout3"
+        android:enabled="false"
+        app:layout_constraintBottom_toTopOf="@+id/chip"
+        app:layout_constraintEnd_toStartOf="@+id/edad"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
+        app:layout_constraintStart_toStartOf="@+id/razaEspecie"
+        app:layout_constraintTop_toBottomOf="@+id/razaEspecie">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/nombre_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/nombre" />
+            android:hint="Nombre" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout3"
+        android:id="@+id/edad"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
-        app:layout_constraintStart_toEndOf="@+id/textInputLayout2"
-        app:layout_constraintTop_toTopOf="@+id/textInputLayout2">
+        android:enabled="false"
+        app:layout_constraintEnd_toEndOf="@+id/razaEspecie"
+        app:layout_constraintStart_toEndOf="@+id/nombre"
+        app:layout_constraintTop_toTopOf="@+id/nombre">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edad_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/edad" />
+            android:hint="Edad" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout4"
+        android:id="@+id/chip"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout5"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout3"
+        android:enabled="false"
+        app:layout_constraintBottom_toTopOf="@+id/veterinario"
+        app:layout_constraintEnd_toEndOf="@+id/edad"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout2"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2">
+        app:layout_constraintStart_toStartOf="@+id/nombre"
+        app:layout_constraintTop_toBottomOf="@+id/nombre">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/chip_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/numero_chip" />
+            android:hint="Número de Chip" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout5"
+        android:id="@+id/veterinario"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout4"
+        android:enabled="false"
+        app:layout_constraintBottom_toTopOf="@+id/boton_anadir"
+        app:layout_constraintEnd_toEndOf="@+id/chip"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout4"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout4">
+        app:layout_constraintStart_toStartOf="@+id/chip"
+        app:layout_constraintTop_toBottomOf="@+id/chip">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/veterianario_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/veterinario_preferido" />
+            android:hint="Veterinario de Preferencia" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/boton_anadir"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:text="@string/anadir_mascota"
+        android:enabled="false"
+        android:text="Añadir Mascota"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout5"
+        app:layout_constraintEnd_toEndOf="@+id/veterinario"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout5"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout5" />
+        app:layout_constraintStart_toStartOf="@+id/veterinario"
+        app:layout_constraintTop_toBottomOf="@+id/veterinario" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
