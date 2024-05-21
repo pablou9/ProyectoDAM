@@ -14,14 +14,44 @@
         android:theme="@style/Theme.PetProtech"
         tools:targetApi="31">
         <activity
-            android:name=".mascotas.activities.AnadirMascotaActivity"
+            android:name=".mascotas.views.MascotaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mascotas.views.MascotasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".app.views.BaseActivity"
+            android:exported="false" />
+        <activity
+            android:name=".app.views.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+
+        <!-- Trigger Google Play services to install the backported photo picker module. -->
+        <!-- suppress AndroidDomInspection -->
+        <service
+            android:name="com.google.android.gms.metadata.ModuleDependencies"
+            android:enabled="false"
+            android:exported="false"
+            tools:ignore="MissingClass">
+            <intent-filter>
+                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
+            </intent-filter>
+
+            <meta-data
+                android:name="photopicker_activity:0:required"
+                android:value="" />
+        </service>
+
+        <activity
+            android:name=".mascotas.views.AnadirMascotaActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>
