@@ -3,7 +3,7 @@ package es.ifp.petprotech.mascotas.model;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -15,12 +15,11 @@ public class MascotaTest {
 
     @Test
     public void crearUnaMascotaConParametrosCorrectos() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
         Mascota mascota = builderValido(now).build();
 
         Assert.assertEquals(mascota.getNombre(), "nombre");
         Assert.assertEquals(mascota.getFechaNacimiento(), now);
-        Assert.assertEquals(mascota.getFamilia(), "familia");
         Assert.assertEquals(mascota.getEspecie(), "especie");
         Assert.assertEquals(mascota.getRaza(), "raza");
         Assert.assertEquals(mascota.getNumeroChip(), CHIP);
@@ -35,22 +34,18 @@ public class MascotaTest {
 
         mockCreacion(assertThrows,
                 // sin nombre
-                () -> Mascota.nuevaMascota().especie("e").familia("f").fechaNacimiento(LocalDateTime.now()).chip(CHIP),
+                () -> Mascota.nuevaMascota().especie("e").fechaNacimiento(LocalDate.now()).chip(CHIP),
                 builder -> builder.nombre(null),
                 builder -> builder.nombre(""),
-                // sin familia
-                builder -> Mascota.nuevaMascota().nombre("n").especie("e").chip(CHIP).fechaNacimiento(LocalDateTime.now()),
-                builder -> builder.familia(null),
-                builder -> builder.familia(""),
                 // sin especie
-                builder -> Mascota.nuevaMascota().nombre("n").familia("f").chip(CHIP).fechaNacimiento(LocalDateTime.now()),
+                builder -> Mascota.nuevaMascota().nombre("n").chip(CHIP).fechaNacimiento(LocalDate.now()),
                 builder -> builder.especie(null),
                 builder -> builder.especie(""),
                 // sin fechaNacimiento
-                builder -> Mascota.nuevaMascota().nombre("n").especie("e").familia("f").chip(CHIP),
+                builder -> Mascota.nuevaMascota().nombre("n").especie("e").chip(CHIP),
                 builder -> builder.fechaNacimiento(null),
                 // sin chip
-                builder -> Mascota.nuevaMascota().especie("e").familia("f").fechaNacimiento(LocalDateTime.now()),
+                builder -> Mascota.nuevaMascota().especie("e").fechaNacimiento(LocalDate.now()),
                 builder -> builder.chip(null),
                 builder -> builder.chip(""));
     }
@@ -65,7 +60,7 @@ public class MascotaTest {
     @Test
     public void crearMascotaConFechaDeNacimientoEnElFuturo_lanzaExcepcion() {
         Assert.assertThrows(IllegalArgumentException.class,
-            () -> builderValido().fechaNacimiento(LocalDateTime.now().plusDays(1)).build());
+            () -> builderValido().fechaNacimiento(LocalDate.now().plusDays(1)).build());
     }
 
     @SafeVarargs
@@ -84,15 +79,14 @@ public class MascotaTest {
     }
 
     private Mascota.Builder builderValido() {
-        return builderValido(LocalDateTime.now());
+        return builderValido(LocalDate.now());
     }
 
-    private Mascota.Builder builderValido(LocalDateTime now) {
+    private Mascota.Builder builderValido(LocalDate now) {
         return Mascota
             .nuevaMascota()
             .nombre("nombre")
             .fechaNacimiento(now)
-            .familia("familia")
             .especie("especie")
             .raza("raza")
             .chip(CHIP);

@@ -1,9 +1,10 @@
 package es.ifp.petprotech.profesionales.model;
 
+import es.ifp.petprotech.bd.Entidad;
 import es.ifp.petprotech.info.model.Horario;
 import es.ifp.petprotech.info.model.InfoContacto;
 
-public abstract class Profesional {
+public abstract class Profesional extends Entidad {
 
     private final String nombre;
     private final String apellidos;

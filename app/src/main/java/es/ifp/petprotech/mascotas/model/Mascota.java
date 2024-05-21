@@ -1,9 +1,18 @@
 package es.ifp.petprotech.mascotas.model;
 
-import java.time.LocalDateTime;
+import static es.ifp.petprotech.app.util.StringUtils.notNull;
+
+import android.net.Uri;
+
+import androidx.annotation.NonNull;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 import es.ifp.petprotech.bd.Entidad;
+import es.ifp.petprotech.veterinarios.model.Veterinario;
 
 public class Mascota extends Entidad {
 
@@ -11,10 +20,12 @@ public class Mascota extends Entidad {
 
     private final String nombre;
     private final String especie;
-    private final String familia;
     private final String raza;
-    private final LocalDateTime fechaNacimiento;
+    private final LocalDate fechaNacimiento;
     private final String numeroChip;
+    private final Veterinario veterinario;
+
+    private Uri foto;
 
     public static Builder nuevaMascota() {
         return new Builder();
@@ -25,10 +36,10 @@ public class Mascota extends Entidad {
 
         nombre = builder.nombre;
         especie = builder.especie;
-        familia = builder.familia;
         raza = builder.raza;
         fechaNacimiento = builder.fechaNacimiento;
         numeroChip = builder.numeroChip;
+        veterinario = builder.veterinario;
     }
 
     private void validarMascota(Builder builder) {
@@ -38,20 +49,21 @@ public class Mascota extends Entidad {
         if (isEmpty(builder.especie))
             throw new IllegalArgumentException("Debes introducir una especie");
 
-        if (isEmpty(builder.familia))
-            throw new IllegalArgumentException("Debes introducir una familia");
-
-        if (builder.fechaNacimiento == null)
-            throw new IllegalArgumentException("Debes introducir una edad y no puede ser menor a 0");
-
-        if (builder.fechaNacimiento.isAfter(LocalDateTime.now()))
+        if (builder.fechaNacimiento != null && builder.fechaNacimiento.isAfter(LocalDate.now()))
             throw new IllegalArgumentException("La fecha de nacimiento no puede ser en el futuro");
 
-        if (isEmpty(builder.numeroChip))
-            throw new IllegalArgumentException("Debes introducir un número de chip");
+        String chip = notNull(builder.numeroChip);
 
-        if (builder.numeroChip.length() != DIGITOS_NUMERO_CHIP)
+        if (!chip.isBlank() && chip.length() != DIGITOS_NUMERO_CHIP)
             throw new IllegalArgumentException("El número de chip debe contener 15 dígitos");
+    }
+
+    public Uri getFoto() {
+        return foto;
+    }
+
+    public void setFoto(Uri foto) {
+        this.foto = foto;
     }
 
     private boolean isEmpty(String s) {
@@ -66,45 +78,58 @@ public class Mascota extends Entidad {
         return especie;
     }
 
-    public String getFamilia() {
-        return familia;
-    }
-
     public String getRaza() {
         return raza;
     }
 
-    public LocalDateTime getFechaNacimiento() {
+    public LocalDate getFechaNacimiento() {
         return fechaNacimiento;
     }
 
     public long getEdad() {
-        return ChronoUnit.YEARS.between(fechaNacimiento, LocalDateTime.now());
+        return ChronoUnit.YEARS.between(fechaNacimiento, LocalTime.now());
     }
 
     public String getNumeroChip() {
         return numeroChip;
     }
 
+    public Veterinario getVeterinario() {
+        return veterinario;
+    }
+
+    @NonNull
     @Override
     public String toString() {
         return "Mascota{" +
             "nombre='" + nombre + '\'' +
             ", especie='" + especie + '\'' +
-            ", familia='" + familia + '\'' +
             ", raza='" + raza + '\'' +
             ", fechaNacimiento=" + fechaNacimiento +
             ", numeroChip='" + numeroChip + '\'' +
             '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Mascota mascota = (Mascota) o;
+        return Objects.equals(nombre, mascota.nombre) && Objects.equals(especie, mascota.especie);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nombre, especie);
+    }
+
     public static class Builder {
         private String nombre;
         private String especie;
-        private String familia;
         private String raza;
-        private LocalDateTime fechaNacimiento;
+        private LocalDate fechaNacimiento;
         private String numeroChip;
+        private Veterinario veterinario;
 
         public Builder nombre(String nombre) {
             this.nombre = nombre;
@@ -114,20 +139,20 @@ public class Mascota extends Entidad {
             this.especie = especie;
             return this;
         }
-        public Builder familia(String familia) {
-            this.familia = familia;
-            return this;
-        }
         public Builder raza(String raza) {
             this.raza = raza;
             return this;
         }
-        public Builder fechaNacimiento(LocalDateTime fechaNacimiento) {
+        public Builder fechaNacimiento(LocalDate fechaNacimiento) {
             this.fechaNacimiento = fechaNacimiento;
             return this;
         }
         public Builder chip(String numeroChip) {
             this.numeroChip = numeroChip;
+            return this;
+        }
+        public Builder veterinario(Veterinario veterinario) {
+            this.veterinario = veterinario;
             return this;
         }
         public Mascota build() {
