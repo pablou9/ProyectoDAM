@@ -1,5 +1,7 @@
 package es.ifp.petprotech.bd.util;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 import es.ifp.petprotech.bd.Entidad;
@@ -55,6 +57,7 @@ public class EntidadDePrueba extends Entidad {
         return edad == that.edad && prueba == that.prueba && Objects.equals(nombre, that.nombre);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "EntidadDePrueba{" +

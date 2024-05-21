@@ -11,11 +11,15 @@ public class GestorDeBaseDeDatosPrueba extends SQLiteOpenHelper {
         super(context, nombreBaseDeDatos, null, DATABASE_VERSION);
     }
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(ContratoDePrueba.CREAR_TABLA);
+        db.execSQL(ContratoDePrueba.CREAR_TABLA_PRUEBA);
+        db.execSQL(ContratoDePrueba.CREAR_TABLA_INTERMEDIA);
+        db.execSQL(ContratoDePrueba.CREAR_TABLA_ASOCIACION);
     }
 
     public void restart(SQLiteDatabase db) {
-        db.execSQL(ContratoDePrueba.ELIMINAR_TABLA);
+        db.execSQL(ContratoDePrueba.ELIMINAR_TABLA_PRUEBA);
+        db.execSQL(ContratoDePrueba.ELIMINAR_TABLA_INTERMEDIA);
+        db.execSQL(ContratoDePrueba.ELIMINAR_TABLA_ASOCIACION);
         onCreate(db);
     }
 
