@@ -17,7 +17,6 @@ import es.ifp.petprotech.bd.Repositorio;
 import es.ifp.petprotech.bd.RepositorioSQLite;
 import es.ifp.petprotech.centros.datos.CentrosProfesionalesRepositorio;
 import es.ifp.petprotech.centros.model.CentroProfesional;
-import es.ifp.petprotech.mascotas.datos.MascotasRepositorio;
 import es.ifp.petprotech.mascotas.model.Mascota;
 import es.ifp.petprotech.veterinarios.model.Veterinario;
 
@@ -54,22 +53,18 @@ public class VeterinariosRepositorio extends RepositorioSQLite<Veterinario> {
 
     @Override
     protected void despuesDeCrear(Veterinario veterinario) {
-        MascotasRepositorio mascotasRepositorio = (MascotasRepositorio) getRepositorio(Mascota.class);
-
         for (Mascota mascota : veterinario.getMascotas()) {
-            mascotasRepositorio.asociarMuchos(mascota, veterinario);
+            asociarMuchos(veterinario, mascota);
         }
     }
 
     @Override
     protected void despuesDeSeleccionar(List<Veterinario> veterinarios) {
-        MascotasRepositorio mascotasRepositorio = (MascotasRepositorio) getRepositorio(Mascota.class);
-
         long[] idsVeterinarios = extraerIdsVeterianarios(veterinarios);
 
         Map<Long,List<Mascota>> mascotas =
-                mascotasRepositorio.seleccionarPorAsociacion(
-                        Veterinario.class, idsVeterinarios);
+                seleccionarPorAsociacion(
+                        Mascota.class, idsVeterinarios);
 
         for (Veterinario veterinario : veterinarios)
             veterinario.setMascotas(mascotas.get(veterinario.getId()));

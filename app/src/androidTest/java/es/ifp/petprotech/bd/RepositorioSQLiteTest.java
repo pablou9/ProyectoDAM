@@ -9,13 +9,16 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,32 +31,45 @@ import es.ifp.petprotech.bd.util.EntidadAsociacionAMuchosPrueba;
 import es.ifp.petprotech.bd.util.EntidadAsociacionPrueba;
 import es.ifp.petprotech.bd.util.EntidadDePrueba;
 import es.ifp.petprotech.bd.util.GestorDeBaseDeDatosPrueba;
+import es.ifp.petprotech.bd.util.RepositorioAsociacionDePrueba;
 import es.ifp.petprotech.bd.util.RepositorioDePrueba;
 import es.ifp.petprotech.mascotas.model.Mascota;
 
 @RunWith(AndroidJUnit4.class)
+@FixMethodOrder
 public class RepositorioSQLiteTest {
 
     public static final String DATABASE_NAME = "TestDatabase.db";
 
-    private GestorDeBaseDeDatosPrueba gestorBaseDeDatos;
-    private SQLiteDatabase bd;
+    private static GestorDeBaseDeDatosPrueba gestorBaseDeDatos;
+    private static SQLiteDatabase bd;
     private Repositorio<EntidadDePrueba> repositorio;
+
+    @BeforeClass
+    public static void recrearBaseDeDatos() {
+        Context context = ApplicationProvider.getApplicationContext();
+
+        context.deleteDatabase(DATABASE_NAME);
+
+        gestorBaseDeDatos = new GestorDeBaseDeDatosPrueba(context, DATABASE_NAME);
+        bd = gestorBaseDeDatos.getWritableDatabase();
+    }
 
     @Before
     public void init() {
-        Context context = ApplicationProvider.getApplicationContext();
-        gestorBaseDeDatos = new GestorDeBaseDeDatosPrueba(context, DATABASE_NAME);
-        bd = gestorBaseDeDatos.getWritableDatabase();
-        assert bd != null;
+        gestorBaseDeDatos.restart(bd);
+        BaseDeDatosDePrueba dbPrueba = new BaseDeDatosDePrueba(bd);
 
-        repositorio = new RepositorioDePrueba(new BaseDeDatosDePrueba(bd));
+        RepositorioDePrueba repositorio = new RepositorioDePrueba(dbPrueba);
+        repositorio.setRepositoriosContenidos(Map.of(
+            EntidadAsociacionPrueba.class, new RepositorioAsociacionDePrueba(dbPrueba)
+        ));
+
+        this.repositorio = repositorio;
     }
 
-    @After
-    public void close() {
-        gestorBaseDeDatos.restart(bd);
-        bd.close();
+    @AfterClass
+    public static void close() {
         gestorBaseDeDatos.close();
     }
 
@@ -110,7 +126,7 @@ public class RepositorioSQLiteTest {
         EntidadAsociacionPrueba entidadAsociacion = insertarEntidadAsociacion();
         EntidadDePrueba entidadDePrueba = entidadDePrueba();
 
-        boolean asociada = repositorio.asociar(entidadDePrueba, entidadAsociacion);
+        boolean asociada = repositorio.asociarAEstaEntidad(entidadDePrueba, entidadAsociacion);
 
         Assert.assertTrue(asociada);
     }
@@ -123,7 +139,7 @@ public class RepositorioSQLiteTest {
         // entidad invalida. Viola la restriccion UNIQUE de el atributo 'nombre'
         EntidadDePrueba invalida = new EntidadDePrueba(entidad.getNombre(), 1, false);
 
-        boolean asociada = repositorio.asociar(invalida, insertarEntidadAsociacion());
+        boolean asociada = repositorio.asociarAEstaEntidad(invalida, insertarEntidadAsociacion());
 
         Assert.assertFalse(asociada);
     }
@@ -133,9 +149,17 @@ public class RepositorioSQLiteTest {
         EntidadAsociacionPrueba entidadAsociacion = insertarEntidadAsociacion();
         EntidadDePrueba entidadDePrueba = entidadDePrueba();
 
-        repositorio.asociar(entidadDePrueba, entidadAsociacion);
+        repositorio.asociarAEstaEntidad(entidadDePrueba, entidadAsociacion);
 
-        assertEntidadAsociada(entidadDePrueba, entidadAsociacion.getId());
+        try (Cursor cursor = bd.rawQuery("SELECT * FROM " + ContratoDePrueba.NOMBRE_TABLA_ASOCIACION, null)) {
+
+            cursor.moveToNext();
+
+            long idAsociada = cursor.getInt(cursor.getColumnIndexOrThrow(ContratoDePrueba.ColumnasAsociacion.CLAVE_FORANEA));
+            Assert.assertEquals(entidadDePrueba.getId(), idAsociada);
+        }
+
+
         Assert.assertEquals(1, entidadDePrueba.getId());
     }
 
@@ -146,7 +170,7 @@ public class RepositorioSQLiteTest {
                 new EntidadAsociacionPrueba("Asociacion", ThreadLocalRandom.current().nextInt());
 
         Assert.assertThrows(IllegalArgumentException.class,
-            () -> repositorio.asociar(entidad, asociar));
+            () -> repositorio.asociarAEstaEntidad(entidad, asociar));
     }
 
     @Test
@@ -157,19 +181,20 @@ public class RepositorioSQLiteTest {
         EntidadAsociacionPrueba asociar = insertarEntidadAsociacion();
 
         Assert.assertThrows(IllegalStateException.class,
-                () -> repo.asociar(entidad, asociar));
+                () -> repo.asociarAEstaEntidad(entidad, asociar));
     }
 
     @Test
     public void asociarUnaEntidadAOtraSinIncluirEnElIndiceDeAsociaciones_lanzaExcepcion() {
         RepositorioDePrueba repo = new RepositorioDePrueba(new BaseDeDatosDePrueba(bd));
-        repo.anadirAsociaciones(Map.of(Mascota.class, "ColumnaInalcanzable"));
+        repo.anadirAsociaciones(Map.of(
+                Mascota.class, new RepositorioSQLite.AsociaciacionUnoAMuchos("a", "a")));
 
         EntidadDePrueba entidad = entidadDePrueba();
         EntidadAsociacionPrueba asociar = insertarEntidadAsociacion();
 
         Assert.assertThrows(IllegalStateException.class,
-                () -> repo.asociar(entidad, asociar));
+                () -> repo.asociarAEstaEntidad(entidad, asociar));
     }
 
     @Test
@@ -240,7 +265,7 @@ public class RepositorioSQLiteTest {
     public void asociarUnaEntidadAMuchasSinIncluirEnElIndiceDeAsociaciones_lanzaExcepcion() {
         RepositorioDePrueba repo = new RepositorioDePrueba(new BaseDeDatosDePrueba(bd));
         repo.anadirAsociacionesAMuchos(Map.of(
-                Mascota.class, new RepositorioSQLite.AsociaciacionAMuchos("", "", "", "")));
+                Mascota.class, new RepositorioSQLite.AsociaciacionMuchosAMuchos("", "", "", "")));
 
         EntidadDePrueba entidad = entidadDePrueba();
         EntidadAsociacionPrueba asociar = insertarEntidadAsociacion();
@@ -332,24 +357,31 @@ public class RepositorioSQLiteTest {
 
     @Test
     public void seleccionaEntidadesPorAsociacion() {
-        EntidadAsociacionPrueba entidadAsociacion = insertarEntidadAsociacion();
+        EntidadAsociacionPrueba entidadAsociacion1 = insertarEntidadAsociacion();
+        EntidadAsociacionPrueba entidadAsociacion2 = insertarEntidadAsociacion();
+        EntidadAsociacionPrueba entidadAsociacion3 = insertarEntidadAsociacion();
 
-        EntidadDePrueba entidad1 = entidadDePrueba();
-        EntidadDePrueba entidad2 = entidadDePrueba();
-        EntidadDePrueba entidad3 = entidadDePrueba();
+        EntidadDePrueba entidad = entidadDePrueba();
 
-        repositorio.asociar(entidad1, entidadAsociacion);
-        repositorio.asociar(entidad2, entidadAsociacion);
-        repositorio.asociar(entidad3, entidadAsociacion);
+        repositorio.asociarAEstaEntidad(entidad, entidadAsociacion1);
+        repositorio.asociarAEstaEntidad(entidad, entidadAsociacion2);
+        repositorio.asociarAEstaEntidad(entidad, entidadAsociacion3);
 
-        Map<Long, List<EntidadDePrueba>> asociaciones =
+        Map<Long, List<EntidadAsociacionPrueba>> asociaciones =
                 repositorio.seleccionarPorAsociacion(EntidadAsociacionPrueba.class, null);
 
-        List<EntidadDePrueba> entidadesAsociadas = asociaciones.get(entidadAsociacion.getId());
+        List<EntidadAsociacionPrueba> entidadesAsociadas = asociaciones.get(entidad.getId());
+        assert entidadesAsociadas != null;
+
+        Log.d(TAG, "seleccionaEntidadesPorAsociacion: RESULT " + entidadesAsociadas);
 
         Assert.assertEquals(3, entidadesAsociadas.size());
-        Assert.assertTrue(entidadesAsociadas.containsAll(List.of(entidad1, entidad2, entidad3)));
+        Assert.assertTrue(entidadesAsociadas.containsAll(List.of(
+            entidadAsociacion1, entidadAsociacion2, entidadAsociacion3
+        )));
     }
+
+    private static final String TAG = "RepositorioSQLiteTest";
 
     @Test
     public void seleccionaEntidadesPorAsociacionAMuchos() {
@@ -394,9 +426,11 @@ public class RepositorioSQLiteTest {
     public void seleccionarEntidadesPorAsociacionDeEntidadesNoPresentesEnNingunIndiceDeAsociacion_lanzaExcepcion() {
         RepositorioDePrueba repositorio = new RepositorioDePrueba(new BaseDeDatosDePrueba(bd));
 
-        repositorio.anadirAsociaciones(Map.of(Mascota.class, ""));
+        repositorio.anadirAsociaciones(Map.of(
+                Mascota.class, new RepositorioSQLite.AsociaciacionUnoAMuchos("", "")));
+
         repositorio.anadirAsociacionesAMuchos(Map.of(
-                Mascota.class, new RepositorioSQLite.AsociaciacionAMuchos("", "", "", "")));
+                Mascota.class, new RepositorioSQLite.AsociaciacionMuchosAMuchos("", "", "", "")));
 
         Assert.assertThrows(IllegalStateException.class,
                 () -> repositorio.seleccionarPorAsociacion(EntidadAsociacionAMuchosPrueba.class, null));
@@ -471,17 +505,6 @@ public class RepositorioSQLiteTest {
         Assert.assertNull(enBaseDeDatos);
     }
 
-    private void assertEntidadAsociada(EntidadDePrueba entidad, long idForanea) {
-        try (Cursor cursor = assertEntidadCreada(entidad)) {
-
-            long idAsociada = cursor.getInt(cursor.getColumnIndexOrThrow(
-                    ContratoDePrueba.ColumnasPrueba.CLAVE_FORANEA));
-
-            Assert.assertEquals(idForanea, idAsociada);
-        }
-
-    }
-
     private Cursor assertEntidadCreada(EntidadDePrueba entidad) {
         Assert.assertEquals(1, entidad.getId());
 
@@ -498,8 +521,9 @@ public class RepositorioSQLiteTest {
     }
 
     private EntidadAsociacionPrueba insertarEntidadAsociacion() {
+        int random = ThreadLocalRandom.current().nextInt();
         EntidadAsociacionPrueba entidad =
-            new EntidadAsociacionPrueba("Asociacion", ThreadLocalRandom.current().nextInt());
+            new EntidadAsociacionPrueba("Asociacion"+random, random);
 
         ContentValues valores = new ContentValues();
         valores.put(ContratoDePrueba.ColumnasAsociacion.NOMBRE, entidad.getNombre());

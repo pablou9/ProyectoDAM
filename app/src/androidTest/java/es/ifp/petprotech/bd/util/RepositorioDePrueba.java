@@ -19,15 +19,23 @@ public class RepositorioDePrueba extends RepositorioSQLite<EntidadDePrueba> {
         super(baseDeDatos, ContratoDePrueba.NOMBRE_TABLA_PRUEBA);
 
         if (!invalidarIndices) {
-            anadirAsociaciones(Map.of(EntidadAsociacionPrueba.class, ContratoDePrueba.ColumnasPrueba.CLAVE_FORANEA));
+            anadirAsociaciones(Map.of(
+                    EntidadAsociacionPrueba.class,
+                    new AsociaciacionUnoAMuchos(
+                            ContratoDePrueba.NOMBRE_TABLA_ASOCIACION,
+                            ContratoDePrueba.ColumnasAsociacion.CLAVE_FORANEA)));
+
             anadirAsociacionesAMuchos(Map.of(
                     EntidadAsociacionAMuchosPrueba.class,
-                    new AsociaciacionAMuchos(ContratoDePrueba.NOMBRE_TABLA_INTERMEDIA,
+                    new AsociaciacionMuchosAMuchos(
+                            ContratoDePrueba.NOMBRE_TABLA_INTERMEDIA,
                             ContratoDePrueba.ColumnasPrueba._ID,
                             ContratoDePrueba.ColumnasIntermedias.PRUEBA_ID,
                             ContratoDePrueba.ColumnasIntermedias.ASOCIACION_ID)));
         }
     }
+
+
 
     @Override
     protected EntidadDePrueba extraerEntidad(Cursor cursor) {

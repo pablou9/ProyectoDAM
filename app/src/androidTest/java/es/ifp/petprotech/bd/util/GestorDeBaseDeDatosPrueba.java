@@ -24,12 +24,8 @@ public class GestorDeBaseDeDatosPrueba extends SQLiteOpenHelper {
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Esta base de datos es una base de datos de prueba, por lo que su política de
-        // 'upgrade' es simplemente eliminar los datos y crear la base de datos de nuevo
-        restart(db);
-    }
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onUpgrade(db, oldVersion, newVersion);
+        throw new UnsupportedOperationException("La base de datos debe ser destruida y " +
+            "reconstruida al lanzar las pruebas, no debes hacer upgrades");
     }
 
 }

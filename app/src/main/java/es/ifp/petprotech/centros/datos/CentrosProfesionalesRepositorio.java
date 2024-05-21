@@ -55,12 +55,10 @@ public class CentrosProfesionalesRepositorio extends RepositorioSQLite<CentroPro
     }
 
     private List<Veterinario> anadirVeterinariosACentro(List<CentroProfesional> centros) {
-        Repositorio<Veterinario> veterinarioRepositorio = getRepositorio(Veterinario.class);
-
         long[] idsCentros = extraerIds(centros);
 
         Map<Long, List<Veterinario>> veterinariosPorId =
-                veterinarioRepositorio.seleccionarPorAsociacion(CentroProfesional.class, idsCentros);
+                seleccionarPorAsociacion(Veterinario.class, idsCentros);
 
         List<Veterinario> veterinarios = new ArrayList<>();
 
@@ -80,7 +78,7 @@ public class CentrosProfesionalesRepositorio extends RepositorioSQLite<CentroPro
         long[] idsVeterinarios = extraerIds(veterinarios);
 
         Map<Long, List<Mascota>> mascotas =
-                mascotasRepositorio.seleccionarPorAsociacion(Veterinario.class, idsVeterinarios);
+            mascotasRepositorio.seleccionarPorAsociacionAMuchos(Veterinario.class, idsVeterinarios);
 
         for (Veterinario veterinario : veterinarios)
             veterinario.setMascotas(mascotas.get(veterinario.getId()));
@@ -93,7 +91,10 @@ public class CentrosProfesionalesRepositorio extends RepositorioSQLite<CentroPro
         Log.d(TAG, "despuesDeCrear: creado: " + centroProfesional);
 
         for (Veterinario veterinario : centroProfesional.getVeterinarios()) {
-            asociar(centroProfesional, veterinario);
+            if (veterinario.getId() == 0)
+                getRepositorio(Veterinario.class).crear(veterinario);
+
+            asociarAEstaEntidad(centroProfesional, veterinario);
         }
     }
 

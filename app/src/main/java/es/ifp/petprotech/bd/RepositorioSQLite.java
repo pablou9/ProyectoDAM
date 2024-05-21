@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,8 +26,8 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
     private final String TABLA;
 
     private Map<Class<? extends Entidad>, Repositorio<? extends Entidad>> contiene;
-    private Map<Class<? extends Entidad>, String> indiceAsociaciones;
-    private Map<Class<? extends Entidad>, AsociaciacionAMuchos> indiceAsociacionesAMuchos;
+    private Map<Class<? extends Entidad>, AsociaciacionUnoAMuchos> indiceAsociaciones;
+    private Map<Class<? extends Entidad>, AsociaciacionMuchosAMuchos> indiceAsociacionesAMuchos;
 
     public RepositorioSQLite(BaseDeDatos<SQLiteDatabase> baseDeDatos, String tabla) {
         this.baseDeDatos = baseDeDatos.conectar();
@@ -36,11 +38,11 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
         this.contiene = contiene;
     }
 
-    public void anadirAsociaciones(Map<Class<? extends Entidad>, String> indiceAsociaciones) {
+    public void anadirAsociaciones(Map<Class<? extends Entidad>, AsociaciacionUnoAMuchos> indiceAsociaciones) {
         this.indiceAsociaciones = indiceAsociaciones;
     }
 
-    public void anadirAsociacionesAMuchos(Map<Class<? extends Entidad>, AsociaciacionAMuchos> indiceAsociaciones) {
+    public void anadirAsociacionesAMuchos(Map<Class<? extends Entidad>, AsociaciacionMuchosAMuchos> indiceAsociaciones) {
         this.indiceAsociacionesAMuchos = indiceAsociaciones;
     }
 
@@ -73,8 +75,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
     @SuppressWarnings("unchecked")
     protected <E extends Entidad> Repositorio<E> getRepositorio(Class<E> clase) {
         if (contiene == null)
-            throw new IllegalStateException("Debes sobreescribir el método contiene() desde la " +
-                    "subclase desde la que se invoca este método");
+            throw new IllegalStateException("Debes anadir los repositorios contenidos");
 
         return (Repositorio<E>) contiene.get(clase);
     }
@@ -92,6 +93,8 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
             validarEntidadParaCreacion(entidad);
 
             long id = baseDeDatos.insert(TABLA, null, extraerValores(entidad));
+
+            Log.d(TAG, "crear: ID INSERTADA: " + id);
 
             if (id != -1) {
                 entidad.setId(id);
@@ -116,39 +119,33 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
     }
 
     @Override
-    public boolean asociar(T entidad, Entidad asociar) {
+    public boolean asociarAEstaEntidad(T entidad, Entidad asociar) {
         try {
-            String columnaClaveForanea = extraerColumnaClaveForanea(asociar);
+            if (asociar.getId() == 0)
+                throw new IllegalArgumentException("La entidad a asociar debe haber sido " +
+                        "creada por su respectivo repositorio antes de la asociación");
+
+            AsociaciacionUnoAMuchos asociacion = extraerAsociacionUnoAMuchos(asociar.getClass());
 
             boolean insertarNueva = entidad.getId() < 1;
 
             if(insertarNueva) {
-                ContentValues valores = extraerValores(entidad);
-                valores.put(columnaClaveForanea, asociar.getId());
+                boolean creada = crear(entidad);
 
-                long id = baseDeDatos.insert(TABLA, null, valores);
-
-                if (id != -1) {
-                    entidad.setId(id);
-                    despuesDeCrear(entidad);
-                    return true;
-                }
-
-                return false;
+                if (!creada)
+                    return false;
             }
-            else {
-                // La entidad ya existe, actualizar la clave foránea de la entidad
-                ContentValues valorIdForanea = new ContentValues();
-                valorIdForanea.put(columnaClaveForanea, asociar.getId());
 
-                int registrosActualizados = baseDeDatos.update(
-                        TABLA,
-                    valorIdForanea,
-                    "_ID = ?",
-                    new String[]{String.valueOf(entidad.getId())});
+            ContentValues valorIdForanea = new ContentValues();
+            valorIdForanea.put(asociacion.columnaClaveForanea, entidad.getId());
 
-                return registrosActualizados == 1;
-            }
+            int registrosActualizados = baseDeDatos.update(
+                asociacion.tablaClaveForanea,
+                valorIdForanea,
+                "_ID = ?",
+                new String[]{String.valueOf(asociar.getId())});
+
+            return registrosActualizados == 1;
         }
         catch (SQLiteConstraintException e) {
             Log.e(TAG, "crear: violacion de restriccion" + e.getMessage());
@@ -156,28 +153,24 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
         }
     }
 
-    private String extraerColumnaClaveForanea(Entidad asociar) {
-        if (asociar.getId() < 1)
-            throw new IllegalArgumentException("La entidad que se va a asociar debe de haber " +
-                    "sido insertada a la base de datos antes de la asociación");
-
+    private AsociaciacionUnoAMuchos extraerAsociacionUnoAMuchos(Class<?> claseAsociacion) {
         if (indiceAsociaciones == null)
             throw new IllegalStateException("El índice de asociaciones debe de estar " +
                     "inicializado antes de cualquier asociación");
 
-        String columnaForanea = indiceAsociaciones.get(asociar.getClass());
+        AsociaciacionUnoAMuchos asociacion = indiceAsociaciones.get(claseAsociacion);
 
-        if (columnaForanea == null)
+        if (asociacion == null)
             throw new IllegalStateException("No se ha encontrado la entidad " +
-                    asociar.getClass().getSimpleName() + " en el índice de asociaciones");
+                    claseAsociacion.getSimpleName() + " en el índice de asociaciones");
 
-        return columnaForanea;
+        return asociacion;
     }
 
     @Override
     public boolean asociarMuchos(T entidad, Entidad asociar) {
         try {
-            AsociaciacionAMuchos asociacion = extraerAsociacionAMuchos(asociar);
+            AsociaciacionMuchosAMuchos asociacion = extraerAsociacionAMuchos(asociar);
 
             boolean insertarNueva = entidad.getId() < 1;
 
@@ -207,16 +200,16 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
         }
     }
 
-    private AsociaciacionAMuchos extraerAsociacionAMuchos(Entidad asociar) {
+    private AsociaciacionMuchosAMuchos extraerAsociacionAMuchos(Entidad asociar) {
         if (asociar.getId() < 1)
             throw new IllegalArgumentException("La entidad que se va a asociar debe de haber " +
                     "sido insertada a la base de datos antes de la asociación");
 
-        if (indiceAsociaciones == null)
+        if (indiceAsociacionesAMuchos == null)
             throw new IllegalStateException("El índice de asociaciones debe de estar " +
                     "inicializado antes de cualquier asociación");
 
-        AsociaciacionAMuchos asociacion = indiceAsociacionesAMuchos.get(asociar.getClass());
+        AsociaciacionMuchosAMuchos asociacion = indiceAsociacionesAMuchos.get(asociar.getClass());
 
         if (asociacion == null)
             throw new IllegalStateException("No se ha encontrado la entidad " +
@@ -301,20 +294,20 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
     }
 
     @Override
-    public Map<Long, List<T>> seleccionarPorAsociacion(Class<?> claseAsociacion, long[] where) {
+    public <E extends Entidad> Map<Long, List<E>> seleccionarPorAsociacion(Class<E> claseAsociacion, long[] where) {
         if (indiceAsociaciones == null)
             throw new IllegalStateException("El índice de asociación debe estar " +
                     "inicializado antes de cualquier selección por asociación");
 
-        String columnaClaveForanea = indiceAsociaciones.get(claseAsociacion);
+        AsociaciacionUnoAMuchos asociacion = indiceAsociaciones.get(claseAsociacion);
 
-        if (columnaClaveForanea == null)
+        if (asociacion == null)
             throw new IllegalStateException("No se ha encontrado la entidad " +
                 claseAsociacion.getSimpleName() + "en el índice de asociaciones a muchos");
 
         String seleccion = where == null
                 ? ""
-                : " WHERE " + columnaClaveForanea +
+                : " WHERE " + TABLA+"."+BaseColumns._ID +
                 (where.length == 1 ? " = ?" : " IN ("+queryParamsEn(where)+")");
 
         String[] argumentosSeleccion = where == null
@@ -323,16 +316,23 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
                 .mapToObj(String::valueOf)
                 .toArray(String[]::new);
 
-        Map<Long, List<T>> entidades = new HashMap<>();
+        Map<Long, List<E>> entidades = new HashMap<>();
 
-        try (Cursor cursor = baseDeDatos.rawQuery("SELECT * FROM " + TABLA + seleccion, argumentosSeleccion))
+        try (Cursor cursor = baseDeDatos.rawQuery(
+                "SELECT * FROM " + TABLA +
+                    " INNER JOIN " + asociacion.tablaClaveForanea +
+                        " ON " + asociacion.tablaClaveForanea+"."+asociacion.columnaClaveForanea +
+                        " = " + TABLA+"."+BaseColumns._ID +
+                    seleccion,
+                argumentosSeleccion))
         {
             while (cursor.moveToNext()) {
 
-                long id = cursor.getLong(cursor.getColumnIndexOrThrow(columnaClaveForanea));
+                long id = cursor.getLong(cursor.getColumnIndexOrThrow(asociacion.columnaClaveForanea));
 
-                List<T> listaEntidades = entidades.computeIfAbsent(id, k-> new ArrayList<>());
-                listaEntidades.add(extraerEntidad(cursor));
+                List<E> listaEntidades = entidades.computeIfAbsent(id, k-> new ArrayList<>());
+                RepositorioSQLite<E> repo = (RepositorioSQLite<E>) getRepositorio(claseAsociacion);
+                listaEntidades.add(repo.extraerEntidad(cursor));
             }
         }
 
@@ -345,7 +345,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
             throw new IllegalStateException("El índice de asociación a muchos debe estar " +
                     "inicializado antes de cualquier selección por asociación a muchos");
 
-        AsociaciacionAMuchos asociacion = indiceAsociacionesAMuchos.get(claseAsociacion);
+        AsociaciacionMuchosAMuchos asociacion = indiceAsociacionesAMuchos.get(claseAsociacion);
 
         if (asociacion == null)
             throw new IllegalStateException("No se ha encontrado la entidad " +
@@ -414,16 +414,35 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
         return registrosEliminados == 1;
     }
 
-    public static class AsociaciacionAMuchos {
+    public static class AsociaciacionUnoAMuchos {
+        private final String tablaClaveForanea;
+        private final String columnaClaveForanea;
+
+        public AsociaciacionUnoAMuchos(String tablaClaveForanea, String columnaClaveForanea) {
+            this.tablaClaveForanea = tablaClaveForanea;
+            this.columnaClaveForanea = columnaClaveForanea;
+        }
+
+        @Override
+        @NonNull
+        public String toString() {
+            return "AsociaciacionUnoAMuchos{" +
+                    "tablaClaveForanea='" + tablaClaveForanea + '\'' +
+                    ", columnaClaveForanea='" + columnaClaveForanea + '\'' +
+                    '}';
+        }
+    }
+
+    public static class AsociaciacionMuchosAMuchos {
         private final String tablaIntermedia;
         private final String columnaIdEntidad;
         private final String columnaIdEnIntermedia;
         private final String columnaAsociacionEnIntermedia;
 
-        public AsociaciacionAMuchos(String tablaIntermedia,
-                                    String columnaIdEntidad,
-                                    String columnaIdEnIntermedia,
-                                    String columnaAsociacionEnIntermedia)
+        public AsociaciacionMuchosAMuchos(String tablaIntermedia,
+                                          String columnaIdEntidad,
+                                          String columnaIdEnIntermedia,
+                                          String columnaAsociacionEnIntermedia)
         {
             this.tablaIntermedia = tablaIntermedia;
             this.columnaIdEntidad = columnaIdEntidad;
@@ -432,6 +451,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
         }
 
         @Override
+        @NonNull
         public String toString() {
             return "AsociaciacionAMuchos{" +
                     "tablaIntermedia='" + tablaIntermedia + '\'' +

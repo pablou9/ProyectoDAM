@@ -55,7 +55,7 @@ public enum Modelo {
         MascotasRepositorio repositorio = new MascotasRepositorio(bd);
 
         repositorio.anadirAsociacionesAMuchos(Map.of(
-                Veterinario.class, new RepositorioSQLite.AsociaciacionAMuchos(
+                Veterinario.class, new RepositorioSQLite.AsociaciacionMuchosAMuchos(
                         ContratoMascotasVeterinarios.NOMBRE_TABLA,
                         ContratoMascotas.Columnas._ID,
                         ContratoMascotasVeterinarios.Columnas.ID_MASCOTA,
@@ -68,10 +68,8 @@ public enum Modelo {
     private static Repositorio<Veterinario> repositorioVeterinarios(BaseDeDatos<SQLiteDatabase> bd) {
         VeterinariosRepositorio repositorio = new VeterinariosRepositorio(bd);
 
-        repositorio.anadirAsociaciones(Map.of(CentroProfesional.class, ContratoVeterinarios.Columnas.ID_CENTRO));
-
         repositorio.anadirAsociacionesAMuchos(Map.of(
-                Mascota.class, new RepositorioSQLite.AsociaciacionAMuchos(
+                Mascota.class, new RepositorioSQLite.AsociaciacionMuchosAMuchos(
                         ContratoMascotasVeterinarios.NOMBRE_TABLA,
                         ContratoVeterinarios.Columnas._ID,
                         ContratoMascotasVeterinarios.Columnas.ID_VETERINARIO,
@@ -86,8 +84,14 @@ public enum Modelo {
     private static Repositorio<CentroProfesional> repositorioCentroProfesional(BaseDeDatos<SQLiteDatabase> bd) {
         CentrosProfesionalesRepositorio repositorio = new CentrosProfesionalesRepositorio(bd);
 
+        repositorio.anadirAsociaciones(Map.of(
+                Veterinario.class, new RepositorioSQLite.AsociaciacionUnoAMuchos(
+                    ContratoVeterinarios.NOMBRE_TABLA, ContratoVeterinarios.Columnas.ID_CENTRO
+                )
+        ));
+
         repositorio.anadirAsociacionesAMuchos(Map.of(
-                Mascota.class, new RepositorioSQLite.AsociaciacionAMuchos(
+                Mascota.class, new RepositorioSQLite.AsociaciacionMuchosAMuchos(
                         ContratoMascotasVeterinarios.NOMBRE_TABLA,
                         ContratoCentrosProfesionales.Columnas._ID,
                         ContratoMascotasVeterinarios.Columnas.ID_VETERINARIO,

@@ -10,16 +10,27 @@ public class EntidadAsociacionPrueba extends Entidad {
 
     private final String nombre;
     private final int random;
+    private final int idForanea;
 
-    public EntidadAsociacionPrueba(long id, String nombre, int random) {
+    public EntidadAsociacionPrueba(long id, String nombre, int random, int idForanea) {
         super(id);
         this.nombre = nombre;
         this.random = random;
+        this.idForanea = idForanea;
+    }
+
+    public EntidadAsociacionPrueba(long id, String nombre, int random) {
+        this(id, nombre, random, 0);
+    }
+
+    public EntidadAsociacionPrueba(String nombre, int random, int idForanea) {
+        this.nombre = nombre;
+        this.random = random;
+        this.idForanea = idForanea;
     }
 
     public EntidadAsociacionPrueba(String nombre, int random) {
-        this.nombre = nombre;
-        this.random = random;
+        this(nombre, random, 0);
     }
 
     public String getNombre() {
@@ -28,6 +39,10 @@ public class EntidadAsociacionPrueba extends Entidad {
 
     public int getRandom() {
         return random;
+    }
+
+    public int getIdForanea() {
+        return idForanea;
     }
 
     @NonNull

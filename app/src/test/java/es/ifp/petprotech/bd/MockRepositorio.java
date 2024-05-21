@@ -13,7 +13,7 @@ public class MockRepositorio<T extends Entidad> implements Repositorio<T> {
     }
 
     @Override
-    public boolean asociar(T entidad, Entidad asociar) {
+    public boolean asociarAEstaEntidad(T entidad, Entidad asociar) {
         return false;
     }
 
@@ -23,17 +23,12 @@ public class MockRepositorio<T extends Entidad> implements Repositorio<T> {
     }
 
     @Override
-    public List<T> seleccionarPorAsociacion(Entidad asociacion) {
+    public <E extends Entidad> Map<Long, List<E>> seleccionarPorAsociacion(Class<E> claseAsociacion, long[] where) {
         return null;
     }
 
     @Override
-    public List<T> seleccionarPorAsociacion(Entidad asociacion, long[] en) {
-        return null;
-    }
-
-    @Override
-    public Map<Long,List<T>> seleccionarPorAsociacion(Class<?> claseAsociacion, long[] en) {
+    public Map<Long, List<T>> seleccionarPorAsociacionAMuchos(Class<?> claseAsociacion, long[] where) {
         return null;
     }
 

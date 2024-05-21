@@ -12,7 +12,6 @@ public class ContratoDePrueba {
         public static final String NOMBRE = "nombre";
         public static final String EDAD = "edad";
         public static final String PRUEBA = "prueba";
-        public static final String CLAVE_FORANEA = "clave_foranea";
     }
 
     public static final class ColumnasIntermedias implements BaseColumns {
@@ -23,6 +22,7 @@ public class ContratoDePrueba {
     public static final class ColumnasAsociacion implements BaseColumns {
         public static final String NOMBRE = "nombre";
         public static final String RANDOM = "random";
+        public static final String CLAVE_FORANEA = "clave_foranea";
     }
 
     public static final String CREAR_TABLA_PRUEBA =
@@ -30,7 +30,6 @@ public class ContratoDePrueba {
             ColumnasPrueba._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             ColumnasPrueba.NOMBRE + " TEXT NOT NULL UNIQUE, " +
             ColumnasPrueba.EDAD + " INTEGER NOT NULL, " +
-            ColumnasPrueba.CLAVE_FORANEA + " INTEGER, " +
             ColumnasPrueba.PRUEBA + " BOOLEAN DEFAULT TRUE)";
 
     public static final String CREAR_TABLA_INTERMEDIA =
@@ -43,7 +42,8 @@ public class ContratoDePrueba {
         "CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA_ASOCIACION + " ( " +
             ColumnasAsociacion._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             ColumnasAsociacion.NOMBRE + " TEXT NOT NULL UNIQUE, " +
-            ColumnasAsociacion.RANDOM + " INTEGER NOT NULL)";
+            ColumnasAsociacion.RANDOM + " INTEGER NOT NULL, " +
+            ColumnasAsociacion.CLAVE_FORANEA + " INTEGER)";
 
     public static final String ELIMINAR_TABLA_PRUEBA =
         "DROP TABLE " + NOMBRE_TABLA_PRUEBA;
