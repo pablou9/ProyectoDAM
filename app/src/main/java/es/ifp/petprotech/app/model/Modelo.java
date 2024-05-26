@@ -11,6 +11,7 @@ import es.ifp.petprotech.bd.Entidad;
 import es.ifp.petprotech.bd.Repositorio;
 import es.ifp.petprotech.bd.RepositorioSQLite;
 import es.ifp.petprotech.centros.datos.CentrosProfesionalesRepositorio;
+import es.ifp.petprotech.centros.datos.ContratoCentrosProfesionales;
 import es.ifp.petprotech.centros.model.CentroProfesional;
 import es.ifp.petprotech.mascotas.datos.ContratoMascotas;
 import es.ifp.petprotech.mascotas.datos.ContratoMascotasVeterinarios;
@@ -84,6 +85,13 @@ public enum Modelo {
     private static Repositorio<Veterinario> repositorioVeterinarios(BaseDeDatos<SQLiteDatabase> bd) {
         VeterinariosRepositorio repositorio = new VeterinariosRepositorio(bd);
 
+        repositorio.anadirAsociaciones(Map.of(
+                CentroProfesional.class, new RepositorioSQLite.AsociaciacionUnoAMuchos(
+                        ContratoCentrosProfesionales.NOMBRE_TABLA,
+                        ContratoVeterinarios.Columnas.ID_CENTRO
+                )
+        ));
+
         repositorio.anadirAsociacionesAMuchos(Map.of(
                 Mascota.class, new RepositorioSQLite.AsociaciacionMuchosAMuchos(
                         ContratoMascotas.NOMBRE_TABLA,
@@ -100,6 +108,8 @@ public enum Modelo {
             Mascota.class, MASCOTA.repositorio,
             CentroProfesional.class, CENTRO_PROFESIONAL.repositorio
         ));
+
+
     }
 
     private static Repositorio<CentroProfesional> repositorioCentroProfesional(BaseDeDatos<SQLiteDatabase> bd) {

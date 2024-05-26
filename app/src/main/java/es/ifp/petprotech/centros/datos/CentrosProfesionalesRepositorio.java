@@ -60,8 +60,7 @@ public class CentrosProfesionalesRepositorio extends RepositorioSQLite<CentroPro
         long[] idsCentros = extraerIds(centros);
         Log.d(TAG, "anadirVeterinariosACentro: IDS: " + Arrays.toString(idsCentros));
 
-        Map<Long, List<Veterinario>> veterinariosPorId =
-                seleccionarPorAsociacion(Veterinario.class, idsCentros);
+        Map<Long, List<Veterinario>> veterinariosPorId = seleccionarMuchosAUno(Veterinario.class, idsCentros);
 
         Log.d(TAG, "anadirVeterinariosACentro: VETES: " + veterinariosPorId);
 
@@ -83,7 +82,7 @@ public class CentrosProfesionalesRepositorio extends RepositorioSQLite<CentroPro
         long[] idsVeterinarios = extraerIds(veterinarios);
 
         Map<Long, List<Mascota>> mascotas =
-            veterinarioRepositorio.seleccionarPorAsociacionAMuchos(Mascota.class, idsVeterinarios);
+            veterinarioRepositorio.seleccionarMuchosAMuchos(Mascota.class, idsVeterinarios);
 
         for (Veterinario veterinario : veterinarios)
             veterinario.setMascotas(mascotas.get(veterinario.getId()));

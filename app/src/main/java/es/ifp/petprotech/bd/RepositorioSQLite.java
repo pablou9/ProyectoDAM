@@ -150,7 +150,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
             valorIdForanea.put(asociacion.columnaClaveForanea, entidad.getId());
 
             int registrosActualizados = baseDeDatos.update(
-                asociacion.tablaClaveForanea,
+                asociacion.tablaObjetivo,
                 valorIdForanea,
                 "_ID = ?",
                 new String[]{String.valueOf(asociar.getId())});
@@ -158,7 +158,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
             return registrosActualizados == 1;
         }
         catch (SQLiteConstraintException e) {
-            Log.e(TAG, "crear: violacion de restriccion" + e.getMessage());
+            Log.e(TAG, "asociarAEstaEntidad: violacion de restriccion" + e.getMessage());
             return false;
         }
     }
@@ -205,7 +205,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
             return id != -1;
         }
         catch (SQLiteConstraintException e) {
-            Log.e(TAG, "crear: violacion de restriccion" + e.getMessage());
+            Log.e(TAG, "asociarMuchos: violacion de restriccion" + e.getMessage());
             return false;
         }
     }
@@ -304,7 +304,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
     }
 
     @Override
-    public <E extends Entidad> Map<Long, List<E>> seleccionarPorAsociacion(Class<E> claseAsociacion, long[] where) {
+    public <E extends Entidad> Map<Long, List<E>> seleccionarUnoAMuchos(Class<E> claseAsociacion, long[] idsForaneas) {
         if (indiceAsociaciones == null)
             throw new IllegalStateException("El índice de asociación debe estar " +
                     "inicializado antes de cualquier selección por asociación");
@@ -313,32 +313,32 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
 
         if (asociacion == null)
             throw new IllegalStateException("No se ha encontrado la entidad " +
-                claseAsociacion.getSimpleName() + "en el índice de asociaciones a muchos");
+                    claseAsociacion.getSimpleName() + "en el índice de asociaciones a muchos");
 
-        String seleccion = where == null
+        String seleccion = idsForaneas == null
                 ? ""
                 : " WHERE " + TABLA+"."+BaseColumns._ID +
-                (where.length == 1 ? " = ?" : " IN ("+queryParamsEn(where)+")");
+                (idsForaneas.length == 1 ? " = ?" : " IN ("+queryParamsEn(idsForaneas)+")");
 
-        String[] argumentosSeleccion = where == null
+        String[] argumentosSeleccion = idsForaneas == null
                 ? null
-                : Arrays.stream(where)
+                : Arrays.stream(idsForaneas)
                 .mapToObj(String::valueOf)
                 .toArray(String[]::new);
 
         Map<Long, List<E>> entidades = new HashMap<>();
 
         try (Cursor cursor = baseDeDatos.rawQuery(
-                "SELECT * FROM " + asociacion.tablaClaveForanea +
-                        " INNER JOIN " + TABLA +
-                        " ON " + TABLA+"."+BaseColumns._ID +
-                        " = " + asociacion.tablaClaveForanea+"."+asociacion.columnaClaveForanea +
-                    seleccion,
-                argumentosSeleccion))
+            "SELECT "+asociacion.tablaObjetivo+".*, "+TABLA+"."+BaseColumns._ID + " AS id_where" +
+                " FROM " + asociacion.tablaObjetivo +
+                " INNER JOIN " + TABLA +
+                " ON " + TABLA+"."+BaseColumns._ID +
+                " = " + asociacion.tablaObjetivo+"."+asociacion.columnaClaveForanea +
+                seleccion, argumentosSeleccion))
         {
             while (cursor.moveToNext()) {
 
-                long id = cursor.getLong(cursor.getColumnIndexOrThrow(asociacion.columnaClaveForanea));
+                long id = cursor.getLong(cursor.getColumnIndexOrThrow("id_where"));
 
                 List<E> listaEntidades = entidades.computeIfAbsent(id, k-> new ArrayList<>());
                 RepositorioSQLite<E> repo = (RepositorioSQLite<E>) getRepositorio(claseAsociacion);
@@ -350,7 +350,54 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
     }
 
     @Override
-    public <E extends Entidad> Map<Long, List<E>> seleccionarPorAsociacionAMuchos(Class<E> claseAsociacion, long[] where) {
+    public <E extends Entidad> Map<Long, List<E>> seleccionarMuchosAUno(Class<E> claseAsociacion, long[] idsPropias) {
+        if (indiceAsociaciones == null)
+            throw new IllegalStateException("El índice de asociación debe estar " +
+                    "inicializado antes de cualquier selección por asociación");
+
+        AsociaciacionUnoAMuchos asociacion = indiceAsociaciones.get(claseAsociacion);
+
+        if (asociacion == null)
+            throw new IllegalStateException("No se ha encontrado la entidad " +
+                claseAsociacion.getSimpleName() + "en el índice de asociaciones a muchos");
+
+        String seleccion = idsPropias == null
+                ? ""
+                : " WHERE " + TABLA+"."+BaseColumns._ID +
+                (idsPropias.length == 1 ? " = ?" : " IN ("+queryParamsEn(idsPropias)+")");
+
+        String[] argumentosSeleccion = idsPropias == null
+                ? null
+                : Arrays.stream(idsPropias)
+                .mapToObj(String::valueOf)
+                .toArray(String[]::new);
+
+        Map<Long, List<E>> entidades = new HashMap<>();
+
+        try (Cursor cursor = baseDeDatos.rawQuery(
+            "SELECT "+asociacion.tablaObjetivo+".*, "+TABLA+"."+BaseColumns._ID + " AS id_where" +
+                " FROM " + asociacion.tablaObjetivo +
+                " INNER JOIN " + TABLA +
+                " ON " + TABLA +"."+asociacion.columnaClaveForanea +
+                " = " + asociacion.tablaObjetivo+"."+BaseColumns._ID +
+            seleccion,
+            argumentosSeleccion))
+        {
+            while (cursor.moveToNext()) {
+
+                long id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID));
+
+                List<E> listaEntidades = entidades.computeIfAbsent(id, k-> new ArrayList<>());
+                RepositorioSQLite<E> repo = (RepositorioSQLite<E>) getRepositorio(claseAsociacion);
+                listaEntidades.add(repo.extraerEntidadYAnadirId(cursor));
+            }
+        }
+
+        return entidades;
+    }
+
+    @Override
+    public <E extends Entidad> Map<Long, List<E>> seleccionarMuchosAMuchos(Class<E> claseAsociacion, long[] where) {
         if (indiceAsociacionesAMuchos == null)
             throw new IllegalStateException("El índice de asociación a muchos debe estar " +
                     "inicializado antes de cualquier selección por asociación a muchos");
@@ -404,6 +451,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
     @Override
     public boolean actualizar(T entidad) {
         try {
+
             int registrosActualizados = baseDeDatos.update(
                     TABLA,
                 extraerValores(entidad),
@@ -430,11 +478,11 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
     }
 
     public static class AsociaciacionUnoAMuchos {
-        private final String tablaClaveForanea;
+        private final String tablaObjetivo;
         private final String columnaClaveForanea;
 
-        public AsociaciacionUnoAMuchos(String tablaClaveForanea, String columnaClaveForanea) {
-            this.tablaClaveForanea = tablaClaveForanea;
+        public AsociaciacionUnoAMuchos(String tablaObjetivo, String columnaClaveForanea) {
+            this.tablaObjetivo = tablaObjetivo;
             this.columnaClaveForanea = columnaClaveForanea;
         }
 
@@ -442,7 +490,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
         @NonNull
         public String toString() {
             return "AsociaciacionUnoAMuchos{" +
-                    "tablaClaveForanea='" + tablaClaveForanea + '\'' +
+                    "tablaClaveForanea='" + tablaObjetivo + '\'' +
                     ", columnaClaveForanea='" + columnaClaveForanea + '\'' +
                     '}';
         }

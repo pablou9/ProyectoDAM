@@ -368,7 +368,7 @@ public class RepositorioSQLiteTest {
         repositorio.asociarAEstaEntidad(entidad, entidadAsociacion3);
 
         Map<Long, List<EntidadAsociacionPrueba>> asociaciones =
-                repositorio.seleccionarPorAsociacion(EntidadAsociacionPrueba.class, null);
+                repositorio.seleccionarMuchosAUno(EntidadAsociacionPrueba.class, null);
 
         List<EntidadAsociacionPrueba> entidadesAsociadas = asociaciones.get(entidad.getId());
         assert entidadesAsociadas != null;
@@ -398,13 +398,13 @@ public class RepositorioSQLiteTest {
         repositorio.asociarMuchos(entidad2, entidadAsociacion3);
         repositorio.asociarMuchos(entidad3, entidadAsociacion2);
 
-        Map<Long,List<EntidadDePrueba>> asociaciones =
-            repositorio.seleccionarPorAsociacionAMuchos(
+        Map<Long,List<EntidadAsociacionAMuchosPrueba>> asociaciones =
+            repositorio.seleccionarMuchosAMuchos(
                     EntidadAsociacionAMuchosPrueba.class,
                     new long[]{entidadAsociacion2.getId(), entidadAsociacion3.getId()});
 
-        List<EntidadDePrueba> asociacionesAEntidadAsociacion2 = asociaciones.get(entidadAsociacion2.getId());
-        List<EntidadDePrueba> asociacionesAEntidadAsociacion3 = asociaciones.get(entidadAsociacion3.getId());
+        List<EntidadAsociacionAMuchosPrueba> asociacionesAEntidadAsociacion2 = asociaciones.get(entidadAsociacion2.getId());
+        List<EntidadAsociacionAMuchosPrueba> asociacionesAEntidadAsociacion3 = asociaciones.get(entidadAsociacion3.getId());
 
         assert asociacionesAEntidadAsociacion2 != null;
         assert asociacionesAEntidadAsociacion3 != null;
@@ -419,7 +419,7 @@ public class RepositorioSQLiteTest {
         RepositorioDePrueba repositorio = new RepositorioDePrueba(new BaseDeDatosDePrueba(bd), true);
 
         Assert.assertThrows(IllegalStateException.class,
-                () -> repositorio.seleccionarPorAsociacion(EntidadAsociacionAMuchosPrueba.class, null));
+                () -> repositorio.seleccionarMuchosAUno(EntidadAsociacionAMuchosPrueba.class, null));
     }
 
     @Test
@@ -433,7 +433,7 @@ public class RepositorioSQLiteTest {
                 Mascota.class, new RepositorioSQLite.AsociaciacionMuchosAMuchos("", "", "", "")));
 
         Assert.assertThrows(IllegalStateException.class,
-                () -> repositorio.seleccionarPorAsociacion(EntidadAsociacionAMuchosPrueba.class, null));
+                () -> repositorio.seleccionarMuchosAUno(EntidadAsociacionAMuchosPrueba.class, null));
     }
 
     @Test
