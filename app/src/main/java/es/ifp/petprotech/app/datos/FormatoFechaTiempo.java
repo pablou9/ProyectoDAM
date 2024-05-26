@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import es.ifp.petprotech.app.util.StringUtils;
+
 public class FormatoFechaTiempo {
 
     private static final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -18,11 +20,11 @@ public class FormatoFechaTiempo {
     }
 
     public static String formatoTiempo(LocalTime tiempo) {
-        return tiempo.format(formatoTiempo);
+        return tiempo != null ? tiempo.format(formatoTiempo) : "";
     }
 
     public static LocalTime convertirTiempo(String tiempo) {
-        return LocalTime.parse(tiempo, formatoTiempo);
+        return LocalTime.parse(StringUtils.notNull(tiempo), formatoTiempo);
     }
 
 }

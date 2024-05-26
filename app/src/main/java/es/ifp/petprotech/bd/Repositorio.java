@@ -12,7 +12,9 @@ public interface Repositorio<T extends Entidad> {
     List<T> seleccionarPor(String atributo, String valor);
     List<T> seleccionarEn(long[] ids);
     <E extends Entidad> Map<Long, List<E>> seleccionarPorAsociacion(Class<E> claseAsociacion, long[] where);
-    Map<Long, List<T>> seleccionarPorAsociacionAMuchos(Class<?> claseAsociacion, long[] where);
+    <E extends Entidad> Map<Long, List<E>> seleccionarPorAsociacionAMuchos(Class<E> claseAsociacion, long[] where);
     boolean actualizar(T t);
     boolean eliminar(T t);
+
+    void setRepositoriosAsociados(Map<Class<? extends Entidad>, Repositorio<? extends Entidad>> contiene);
 }

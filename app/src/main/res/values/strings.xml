@@ -22,7 +22,7 @@
     <string name="error_nacimiento_futuro">La fecha de nacimiento no puede ser en el futuro</string>
     <string name="error_chip_invalido">El número de chip debe contener 15 dígitos</string>
     <string name="anadir_imagen">AÑADIR IMAGEN</string>
-    <string name="especialidad">Especialidad</string>
+    <string name="especializacion">Especialización</string>
     <string name="direccion">Dirección</string>
     <string name="pagina_web">Página Web</string>
     <string name="email">Correo Electrónico</string>
@@ -36,4 +36,21 @@
     <string name="mascotas">MASCOTAS</string>
     <string name="anadir_item">Añadir Artículo</string>
     <string name="veterinarios">VETERINARIOS</string>
+    <string name="finalizar">Finalizar →</string>
+    <string name="lunes_abrv">L</string>
+    <string name="martes_abrv">M</string>
+    <string name="miercoles_abrv">X</string>
+    <string name="jueves_abrv">J</string>
+    <string name="viernes_abrv">V</string>
+    <string name="sabado_abrv">S</string>
+    <string name="domingo_abrv">D</string>
+    <string name="lunes">Lunes</string>
+    <string name="martes">Martes</string>
+    <string name="miercoles">Miércoles</string>
+    <string name="jueves">Jueves</string>
+    <string name="viernes">Viernes</string>
+    <string name="sabado">Sábado</string>
+    <string name="domingo">Domingo</string>
+    <string name="dias">Días</string>
+
 </resources>

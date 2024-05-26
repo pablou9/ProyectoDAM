@@ -13,12 +13,12 @@ import es.ifp.petprotech.veterinarios.model.Veterinario;
 public class CentroProfesional extends Entidad {
     private final String nombre;
     private final String direccion;
-    private final String ciudad;
     private final String paginaWeb;
     private final String email;
     private final String telefono;
     private final LocalTime apertura;
     private final LocalTime cierre;
+    private final String dias;
     private final List<Veterinario> profesionales = new ArrayList<>();
 
     public CentroProfesional(Builder builder) {
@@ -29,12 +29,12 @@ public class CentroProfesional extends Entidad {
 
         nombre = builder.nombre;
         direccion = builder.direccion;
-        ciudad = builder.ciudad;
         paginaWeb = builder.paginaWeb;
         email = builder.email;
         telefono = builder.telefono;
         apertura = isEmpty(aperturaInput) ? null : FormatoFechaTiempo.convertirTiempo(builder.apertura);
         cierre = isEmpty(cierreInput) ? null : FormatoFechaTiempo.convertirTiempo(builder.cierre);
+        dias = builder.dias;
     }
 
     private void validarCentroVeterinario(Builder builder) {
@@ -58,8 +58,12 @@ public class CentroProfesional extends Entidad {
         return direccion;
     }
 
-    public String getCiudad() {
-        return ciudad;
+    public String getDias() {
+        return dias;
+    }
+
+    public List<Veterinario> getProfesionales() {
+        return profesionales;
     }
 
     public LocalTime getApertura() {
@@ -71,7 +75,8 @@ public class CentroProfesional extends Entidad {
     }
 
     public void setVeterinarios(List<Veterinario> veterinarios) {
-        profesionales.addAll(veterinarios);
+        if (veterinarios != null)
+            profesionales.addAll(veterinarios);
     }
 
     public void anadirVeterinario(Veterinario veterinario) {
@@ -100,7 +105,7 @@ public class CentroProfesional extends Entidad {
         return "CentroProfesional{" +
                 "nombre='" + nombre + '\'' +
                 ", direccion='" + direccion + '\'' +
-                ", ciudad='" + ciudad + '\'' +
+                ", dias='" + dias + '\'' +
                 ", paginaWeb='" + paginaWeb + '\'' +
                 ", email='" + email + '\'' +
                 ", telefono='" + telefono + '\'' +
@@ -113,12 +118,12 @@ public class CentroProfesional extends Entidad {
     public static class Builder  {
         private String nombre;
         private String direccion;
-        private String ciudad;
         private String paginaWeb;
         private String email;
         private String telefono;
         private String apertura;
         private String cierre;
+        private String dias;
 
         public Builder nombre(String nombre) {
             this.nombre = nombre;
@@ -144,8 +149,12 @@ public class CentroProfesional extends Entidad {
             this.apertura = apertura;
             return this;
         }
-        public Builder cierre(String apertura) {
+        public Builder cierre(String cierre) {
             this.cierre = cierre;
+            return this;
+        }
+        public Builder dias(String dias) {
+            this.dias = dias;
             return this;
         }
 

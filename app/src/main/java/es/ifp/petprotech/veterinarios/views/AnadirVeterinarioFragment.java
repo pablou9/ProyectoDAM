@@ -1,7 +1,7 @@
 package es.ifp.petprotech.veterinarios.views;
 
 import static es.ifp.petprotech.app.model.FabricaViewModel.ANADIR_MASCOTA;
-import static es.ifp.petprotech.app.model.FabricaViewModel.VETERINARIO;
+import static es.ifp.petprotech.app.model.FabricaViewModel.ANADIR_VETERINARIO;
 import static es.ifp.petprotech.veterinarios.viewmodels.AnadirVeterinarioViewModel.CamposVeterinario.APERTURA_CENTRO;
 import static es.ifp.petprotech.veterinarios.viewmodels.AnadirVeterinarioViewModel.CamposVeterinario.CIERRE_CENTRO;
 import static es.ifp.petprotech.veterinarios.viewmodels.AnadirVeterinarioViewModel.CamposVeterinario.DIRECCION_CENTRO;
@@ -12,15 +12,26 @@ import static es.ifp.petprotech.veterinarios.viewmodels.AnadirVeterinarioViewMod
 import static es.ifp.petprotech.veterinarios.viewmodels.AnadirVeterinarioViewModel.CamposVeterinario.WEB_CENTRO;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import es.ifp.petprotech.R;
 import es.ifp.petprotech.app.datos.CampoFormulario;
@@ -33,34 +44,35 @@ import es.ifp.petprotech.veterinarios.viewmodels.AnadirVeterinarioViewModel;
 
 public class AnadirVeterinarioFragment extends Fragment {
 
+    private static final String TAG = "AnadirVeterinarioFragme";
+
     public AnadirVeterinarioFragment() {
         super(R.layout.fragment_anadir_veterinario);
     }
-
-    private Button siguiente;
-    private Button atras;
 
     private Formulario formularioVeterinario;
     private Formulario formularioCentro;
 
     private AnadirVeterinarioViewModel veterinarioViewModel;
-    private AnadirMascotaViewModel viewModel;
+    private AnadirMascotaViewModel mascotaViewModel;
+
+    private List<ToggleButton> botonesSemana;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        viewModel =
+        mascotaViewModel =
             new ViewModelProvider(requireActivity(), ANADIR_MASCOTA.getFabrica())
                     .get(AnadirMascotaViewModel.class);
 
         veterinarioViewModel =
-                new ViewModelProvider(this, VETERINARIO.getFabrica())
+                new ViewModelProvider(this, ANADIR_VETERINARIO.getFabrica())
                         .get(AnadirVeterinarioViewModel.class);
     }
 
     @Override
     public void onDetach() {
-        viewModel = null;
+        mascotaViewModel = null;
         veterinarioViewModel = null;
         super.onDetach();
     }
@@ -69,22 +81,53 @@ public class AnadirVeterinarioFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (viewModel == null)
+        if (mascotaViewModel == null)
             return;
 
         inicializarFormularioVeterinario(view);
         inicializarFormularioCentro(view);
 
-        siguiente = view.findViewById(R.id.siguiente);
-        siguiente.setOnClickListener(e -> siguiente());
+        Button siguiente = view.findViewById(R.id.siguiente);
+        Button atras = view.findViewById(R.id.atras);
 
-        atras = view.findViewById(R.id.atras);
+        siguiente.setOnClickListener(e -> siguiente());
         atras.setOnClickListener(e -> atras());
 
+        botonesSemana = inicializarBotonesDiasDeSemana(view);
+
         veterinarioViewModel.getErrores().observe(getViewLifecycleOwner(),
-                errores -> {
-                    formularioVeterinario.mostarErrores(getContext(), errores);
-                    formularioCentro.mostarErrores(getContext(), errores);
+            errores -> {
+                formularioVeterinario.mostarErrores(getContext(), errores);
+                formularioCentro.mostarErrores(getContext(), errores);
+        });
+    }
+
+    private List<ToggleButton> inicializarBotonesDiasDeSemana(View view) {
+        FragmentActivity activity = requireActivity();
+        return IntStream.of(
+            R.id.lunes, R.id.martes,
+            R.id.miercoles, R.id.jueves,
+            R.id.viernes, R.id.sabado, R.id.domingo)
+        .mapToObj(view::findViewById)
+        .map(v -> (ToggleButton) v)
+        .peek(boton -> anadirListenerABoton(boton, activity))
+        .collect(Collectors.toList());
+    }
+
+    private void anadirListenerABoton(ToggleButton boton, FragmentActivity activity) {
+        new Random().nextInt(99);
+
+
+        boton.setOnCheckedChangeListener((btn, checked) -> {
+            if (checked) {
+                ColorStateList tint = ContextCompat.getColorStateList(requireActivity(), R.color.primary);
+                ViewCompat.setBackgroundTintList(boton, tint);
+                boton.setTextColor(activity.getColor(R.color.white));
+            }
+            else {
+                ViewCompat.setBackgroundTintList(boton, null);
+                boton.setTextColor(activity.getColor(R.color.primary));
+            }
         });
     }
 
@@ -93,7 +136,7 @@ public class AnadirVeterinarioFragment extends Fragment {
 
         formularioVeterinario.anadirCampos(view.findViewById(R.id.formulario_info_veterinario),
             new CampoFormulario(NOMBRE.nombre(), getString(R.string.nombre)+"*"),
-            new CampoFormulario(ESPECIALIDAD.nombre(), getString(R.string.especialidad))
+            new CampoFormulario(ESPECIALIDAD.nombre(), getString(R.string.especializacion))
         );
     }
 
@@ -119,25 +162,26 @@ public class AnadirVeterinarioFragment extends Fragment {
                 R.drawable.baseline_access_time_28);
     }
 
-    private static final String TAG = "AnadirVeterinarioFragme";
-
     private void siguiente() {
         ValoresFormulario valores = formularioVeterinario.unirValores(formularioCentro);
 
-        Log.d(TAG, "siguiente: interaccion: " + valores.usuarioHaInteractuado());
+        boolean creado = veterinarioViewModel.crearCentroVeterinario(
+                valores,
+                extraerDiasDeApertura(),
+                mascotaViewModel.getMascota());
 
-        if (valores.usuarioHaInteractuado()) {
-            boolean creado = veterinarioViewModel.crearCentroVeterinario(valores, viewModel.getMascota());
+        if (creado)
+            mascotaViewModel.siguienteAccion();
+    }
 
-            if (creado)
-                viewModel.siguienteAccion();
-        }
-        else {
-            viewModel.siguienteAccion();
-        }
+    private Map<String, Boolean> extraerDiasDeApertura() {
+        return botonesSemana.stream()
+                .collect(HashMap::new,
+                        (mapa, boton) -> mapa.put((String) boton.getTag(),
+                        boton.isChecked()), HashMap::putAll);
     }
 
     private void atras() {
-        viewModel.accionAnterior();
+        mascotaViewModel.accionAnterior();
     }
 }

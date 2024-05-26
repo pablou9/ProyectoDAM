@@ -10,12 +10,11 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import es.ifp.petprotech.bd.BaseDeDatos;
 import es.ifp.petprotech.bd.Entidad;
-import es.ifp.petprotech.bd.Repositorio;
 import es.ifp.petprotech.bd.RepositorioSQLite;
-import es.ifp.petprotech.centros.datos.CentrosProfesionalesRepositorio;
 import es.ifp.petprotech.centros.model.CentroProfesional;
 import es.ifp.petprotech.mascotas.model.Mascota;
 import es.ifp.petprotech.veterinarios.model.Veterinario;
@@ -28,14 +27,8 @@ public class VeterinariosRepositorio extends RepositorioSQLite<Veterinario> {
 
     @Override
     protected Veterinario extraerEntidad(Cursor cursor) {
-        Repositorio<CentroProfesional> repositorioCentros =
-                (CentrosProfesionalesRepositorio) getRepositorio(CentroProfesional.class);
-
-        CentroProfesional centro = repositorioCentros
-                .seleccionarPorId(cursor.getLong(cursor.getColumnIndexOrThrow(ID_CENTRO)));
 
         return Veterinario.nuevoVeterinario()
-                .centro(centro)
                 .nombre(cursor.getString(cursor.getColumnIndexOrThrow(NOMBRE)))
                 .especialidad(cursor.getString(cursor.getColumnIndexOrThrow(ESPECIALIDAD)))
                 .build();
@@ -45,7 +38,7 @@ public class VeterinariosRepositorio extends RepositorioSQLite<Veterinario> {
     protected ContentValues extraerValores(Veterinario veterinario) {
         ContentValues values = new ContentValues();
         values.put(NOMBRE, veterinario.getNombre());
-        values.put(ESPECIALIDAD, veterinario.getEspecialidad());
+        values.put(ESPECIALIDAD, veterinario.getEspecializacion());
         values.put(ID_CENTRO, veterinario.getCentro().getId());
 
         return values;
@@ -60,14 +53,25 @@ public class VeterinariosRepositorio extends RepositorioSQLite<Veterinario> {
 
     @Override
     protected void despuesDeSeleccionar(List<Veterinario> veterinarios) {
+
         long[] idsVeterinarios = extraerIdsVeterianarios(veterinarios);
 
-        Map<Long,List<Mascota>> mascotas =
-                seleccionarPorAsociacion(
+        Map<Long, List<CentroProfesional>> centros =
+                seleccionarMuchosAUno(CentroProfesional.class, idsVeterinarios);
+
+        Map<Long,List<Mascota>> mascotasVeterinarios =
+                seleccionarMuchosAMuchos(
                         Mascota.class, idsVeterinarios);
 
-        for (Veterinario veterinario : veterinarios)
-            veterinario.setMascotas(mascotas.get(veterinario.getId()));
+        for (Veterinario veterinario : veterinarios) {
+            List<Mascota> mascotas = mascotasVeterinarios.get(veterinario.getId());
+            List<CentroProfesional> centrosVeterinarios = centros.get(veterinario.getId());
+
+            if (mascotas != null && !mascotas.isEmpty()) {
+                veterinario.setMascotas(mascotas);
+                veterinario.setCentro(Objects.requireNonNull(centrosVeterinarios).get(0));
+            }
+        }
     }
 
     private long[] extraerIdsVeterianarios(List<Veterinario> veterinarios) {

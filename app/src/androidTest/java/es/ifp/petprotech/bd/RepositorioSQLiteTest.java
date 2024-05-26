@@ -61,7 +61,7 @@ public class RepositorioSQLiteTest {
         BaseDeDatosDePrueba dbPrueba = new BaseDeDatosDePrueba(bd);
 
         RepositorioDePrueba repositorio = new RepositorioDePrueba(dbPrueba);
-        repositorio.setRepositoriosContenidos(Map.of(
+        repositorio.setRepositoriosAsociados(Map.of(
             EntidadAsociacionPrueba.class, new RepositorioAsociacionDePrueba(dbPrueba)
         ));
 

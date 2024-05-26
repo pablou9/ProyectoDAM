@@ -26,7 +26,7 @@ public abstract class ListaActivivity<T extends Entidad> extends BaseActivity {
         return true;
     }
 
-    protected abstract LiveData<List<T>> getData();
+    protected abstract LiveData<List<T>> getLista();
     protected abstract AdaptadorLista<T> adaptador();
     protected abstract Class<?> anadirEntidadActivity();
     protected abstract Class<?> entidadActivity();
@@ -51,6 +51,6 @@ public abstract class ListaActivivity<T extends Entidad> extends BaseActivity {
 
         lista.setAdapter(adaptadorLista);
 
-        getData().observe(this, adaptadorLista::setData);
+        getLista().observe(this, adaptadorLista::setData);
     }
 }

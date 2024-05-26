@@ -14,6 +14,15 @@
         android:theme="@style/Theme.PetProtech"
         tools:targetApi="31">
         <activity
+            android:name=".veterinarios.views.VeterinarioActivity"
+            android:exported="false" />
+        <activity
+            android:name=".veterinarios.views.VeterinariosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".veterinarios.views.AnadirVeterinarioActivity"
+            android:exported="false" />
+        <activity
             android:name=".mascotas.views.MascotaActivity"
             android:exported="false" />
         <activity
@@ -30,10 +39,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-        </activity>
-
-        <!-- Trigger Google Play services to install the backported photo picker module. -->
+        </activity> <!-- Trigger Google Play services to install the backported photo picker module. -->
         <!-- suppress AndroidDomInspection -->
         <service
             android:name="com.google.android.gms.metadata.ModuleDependencies"
@@ -51,7 +57,7 @@
 
         <activity
             android:name=".mascotas.views.AnadirMascotaActivity"
-            android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>

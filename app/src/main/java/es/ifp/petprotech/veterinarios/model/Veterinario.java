@@ -10,7 +10,7 @@ import es.ifp.petprotech.mascotas.model.Mascota;
 public class Veterinario extends Entidad {
 
     private final String nombre;
-    private final CentroProfesional centro;
+    private CentroProfesional centro;
     private final String especialidad;
     private final List<Mascota> mascotas = new ArrayList<>();
 
@@ -25,6 +25,10 @@ public class Veterinario extends Entidad {
     private void validarVeterinario(Builder builder) {
         if (isEmpty(builder.nombre))
             throw new IllegalArgumentException("Debes introducir un nombre de veterinario");
+    }
+
+    public void setCentro(CentroProfesional centro) {
+        this.centro = centro;
     }
 
     private boolean isEmpty(String s) {
@@ -43,7 +47,7 @@ public class Veterinario extends Entidad {
         return new Veterinario.Builder();
     }
 
-    public String getEspecialidad() {
+    public String getEspecializacion() {
         return especialidad;
     }
 

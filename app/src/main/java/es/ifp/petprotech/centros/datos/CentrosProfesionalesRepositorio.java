@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -55,10 +56,14 @@ public class CentrosProfesionalesRepositorio extends RepositorioSQLite<CentroPro
     }
 
     private List<Veterinario> anadirVeterinariosACentro(List<CentroProfesional> centros) {
+        Log.d(TAG, "anadirVeterinariosACentro: CENTROS: " + centros);
         long[] idsCentros = extraerIds(centros);
+        Log.d(TAG, "anadirVeterinariosACentro: IDS: " + Arrays.toString(idsCentros));
 
         Map<Long, List<Veterinario>> veterinariosPorId =
                 seleccionarPorAsociacion(Veterinario.class, idsCentros);
+
+        Log.d(TAG, "anadirVeterinariosACentro: VETES: " + veterinariosPorId);
 
         List<Veterinario> veterinarios = new ArrayList<>();
 
@@ -73,12 +78,12 @@ public class CentrosProfesionalesRepositorio extends RepositorioSQLite<CentroPro
     }
 
     private void anadirMascotasAVeterinarios(List<Veterinario> veterinarios) {
-        Repositorio<Mascota> mascotasRepositorio = getRepositorio(Mascota.class);
+        Repositorio<Veterinario> veterinarioRepositorio = getRepositorio(Veterinario.class);
 
         long[] idsVeterinarios = extraerIds(veterinarios);
 
         Map<Long, List<Mascota>> mascotas =
-            mascotasRepositorio.seleccionarPorAsociacionAMuchos(Veterinario.class, idsVeterinarios);
+            veterinarioRepositorio.seleccionarPorAsociacionAMuchos(Mascota.class, idsVeterinarios);
 
         for (Veterinario veterinario : veterinarios)
             veterinario.setMascotas(mascotas.get(veterinario.getId()));

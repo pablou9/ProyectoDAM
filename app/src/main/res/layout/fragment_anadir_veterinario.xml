@@ -48,6 +48,100 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="8dp"
+                android:text="@string/dias"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ToggleButton
+                    android:id="@+id/lunes"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_left_corners_primary"
+                    android:textColor="@color/primary"
+                    android:tag="@string/lunes"
+                    android:textOff="@string/lunes_abrv"
+                    android:textOn="@string/lunes_abrv" />
+
+                <ToggleButton
+                    android:id="@+id/martes"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rectangle_primary"
+                    android:textColor="@color/primary"
+                    android:tag="@string/martes"
+                    android:textOff="@string/martes_abrv"
+                    android:textOn="@string/martes_abrv" />
+
+                <ToggleButton
+                    android:id="@+id/miercoles"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rectangle_primary"
+                    android:textColor="@color/primary"
+                    android:tag="@string/miercoles"
+                    android:textOff="@string/miercoles_abrv"
+                    android:textOn="@string/miercoles_abrv"/>
+
+                <ToggleButton
+                    android:id="@+id/jueves"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rectangle_primary"
+                    android:textColor="@color/primary"
+                    android:tag="@string/jueves"
+                    android:textOff="@string/jueves_abrv"
+                    android:textOn="@string/jueves_abrv"/>
+
+                <ToggleButton
+                    android:id="@+id/viernes"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rectangle_primary"
+                    android:textColor="@color/primary"
+                    android:tag="@string/viernes"
+                    android:textOff="@string/viernes_abrv"
+                    android:textOn="@string/viernes_abrv"/>
+
+                <ToggleButton
+                    android:id="@+id/sabado"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rectangle_primary"
+                    android:textColor="@color/primary"
+                    android:tag="@string/sabado"
+                    android:textOff="@string/sabado_abrv"
+                    android:textOn="@string/sabado_abrv"/>
+
+                <ToggleButton
+                    android:id="@+id/domingo"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_right_corners_primary"
+                    android:textColor="@color/primary"
+                    android:tag="@string/domingo"
+                    android:textOff="@string/domingo_abrv"
+                    android:textOn="@string/domingo_abrv"/>
+
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

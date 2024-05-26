@@ -109,7 +109,7 @@
         app:layout_constraintTop_toBottomOf="@+id/boton_mascotas" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/boton_veterinarios"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/baseline_local_hospital_60"
@@ -126,6 +126,6 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/boton_veterinarios" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

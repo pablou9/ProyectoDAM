@@ -3,7 +3,6 @@ package es.ifp.petprotech.mascotas.views;
 
 import static es.ifp.petprotech.app.model.FabricaViewModel.MASCOTA;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -38,7 +37,7 @@ public class MascotaActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        long idMascota = extraerIdMascota();
+        long idMascota = extraerId();
 
         foto = findViewById(R.id.foto);
         nombre = findViewById(R.id.nombre);
@@ -49,16 +48,6 @@ public class MascotaActivity extends BaseActivity {
             new ViewModelProvider(this, MASCOTA.getFabrica()).get(MascotasViewModel.class);
 
         viewModel.getMascota(idMascota).observe(this, this::popularVista);
-    }
-
-    private long extraerIdMascota() {
-        Intent intent = getIntent();
-        long id = intent.getLongExtra("data", -1);
-
-        if (id == -1)
-            throw new IllegalStateException("Debes proporcionar una id de mascota en esta actividad");
-
-        return id;
     }
 
     private void popularVista(Mascota mascota) {

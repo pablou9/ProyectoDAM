@@ -23,7 +23,7 @@
     <string name="error_nacimiento_futuro">Date of Birth can\'t be in the future</string>
     <string name="error_chip_invalido">Chip number must be at least 15 characters long</string>
     <string name="anadir_imagen">ADD IMAGE</string>
-    <string name="especialidad">Specialty</string>
+    <string name="especializacion">Specialty</string>
     <string name="direccion">Address</string>
     <string name="pagina_web">Webpage</string>
     <string name="email">Email</string>
@@ -37,4 +37,20 @@
     <string name="mascotas">PETS</string>
     <string name="anadir_item">Add Item</string>
     <string name="veterinarios">VETERINARIES</string>
+    <string name="finalizar">Finish →</string>
+    <string name="lunes_abrv">M</string>
+    <string name="martes_abrv">T</string>
+    <string name="miercoles_abrv">W</string>
+    <string name="jueves_abrv">T</string>
+    <string name="viernes_abrv">F</string>
+    <string name="sabado_abrv">S</string>
+    <string name="domingo_abrv">S</string>
+    <string name="lunes">Monday</string>
+    <string name="martes">Tuesday</string>
+    <string name="miercoles">Wednesday</string>
+    <string name="jueves">Thursday</string>
+    <string name="viernes">Friday</string>
+    <string name="sabado">Saturday</string>
+    <string name="domingo">Sunday</string>
+    <string name="dias">Opening Days</string>
 </resources>

@@ -25,7 +25,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
     private final SQLiteDatabase baseDeDatos;
     private final String TABLA;
 
-    private Map<Class<? extends Entidad>, Repositorio<? extends Entidad>> contiene;
+    private Map<Class<? extends Entidad>, Repositorio<? extends Entidad>> asociados;
     private Map<Class<? extends Entidad>, AsociaciacionUnoAMuchos> indiceAsociaciones;
     private Map<Class<? extends Entidad>, AsociaciacionMuchosAMuchos> indiceAsociacionesAMuchos;
 
@@ -34,8 +34,9 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
         this.TABLA = tabla;
     }
 
-    public void setRepositoriosContenidos(Map<Class<? extends Entidad>, Repositorio<? extends Entidad>> contiene) {
-        this.contiene = contiene;
+    @Override
+    public void setRepositoriosAsociados(Map<Class<? extends Entidad>, Repositorio<? extends Entidad>> contiene) {
+        this.asociados = contiene;
     }
 
     public void anadirAsociaciones(Map<Class<? extends Entidad>, AsociaciacionUnoAMuchos> indiceAsociaciones) {
@@ -44,6 +45,17 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
 
     public void anadirAsociacionesAMuchos(Map<Class<? extends Entidad>, AsociaciacionMuchosAMuchos> indiceAsociaciones) {
         this.indiceAsociacionesAMuchos = indiceAsociaciones;
+    }
+
+    private T extraerEntidadYAnadirId(Cursor cursor) {
+        T entidad = extraerEntidad(cursor);
+
+        if (entidad.getId() == 0) {
+            long id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID));
+            entidad.setId(id);
+        }
+
+        return entidad;
     }
 
     protected abstract T extraerEntidad(Cursor cursor);
@@ -74,10 +86,10 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
 
     @SuppressWarnings("unchecked")
     protected <E extends Entidad> Repositorio<E> getRepositorio(Class<E> clase) {
-        if (contiene == null)
+        if (asociados == null)
             throw new IllegalStateException("Debes anadir los repositorios contenidos");
 
-        return (Repositorio<E>) contiene.get(clase);
+        return (Repositorio<E>) asociados.get(clase);
     }
 
     private String queryParamsEn(long[] ids) {
@@ -93,8 +105,6 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
             validarEntidadParaCreacion(entidad);
 
             long id = baseDeDatos.insert(TABLA, null, extraerValores(entidad));
-
-            Log.d(TAG, "crear: ID INSERTADA: " + id);
 
             if (id != -1) {
                 entidad.setId(id);
@@ -228,7 +238,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
         {
             if (cursor.getCount() > 0) {
                 cursor.moveToNext();
-                T entidad = extraerEntidad(cursor);
+                T entidad = extraerEntidadYAnadirId(cursor);
                 despuesDeSeleccionar(List.of(entidad));
                 return entidad;
             }
@@ -242,7 +252,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
         {
             List<T> entidades = new ArrayList<>();
             while (cursor.moveToNext()) {
-                T entidad = extraerEntidad(cursor);
+                T entidad = extraerEntidadYAnadirId(cursor);
                 entidades.add(entidad);
             }
 
@@ -266,7 +276,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
         {
             List<T> entidades = new ArrayList<>();
             while (cursor.moveToNext()) {
-                T entidad = extraerEntidad(cursor);
+                T entidad = extraerEntidadYAnadirId(cursor);
                 entidades.add(entidad);
             }
 
@@ -284,7 +294,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
         {
             List<T> entidades = new ArrayList<>();
             while (cursor.moveToNext()) {
-                T entidad = extraerEntidad(cursor);
+                T entidad = extraerEntidadYAnadirId(cursor);
                 entidades.add(entidad);
             }
             despuesDeSeleccionar(entidades);
@@ -319,10 +329,10 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
         Map<Long, List<E>> entidades = new HashMap<>();
 
         try (Cursor cursor = baseDeDatos.rawQuery(
-                "SELECT * FROM " + TABLA +
-                    " INNER JOIN " + asociacion.tablaClaveForanea +
-                        " ON " + asociacion.tablaClaveForanea+"."+asociacion.columnaClaveForanea +
-                        " = " + TABLA+"."+BaseColumns._ID +
+                "SELECT * FROM " + asociacion.tablaClaveForanea +
+                        " INNER JOIN " + TABLA +
+                        " ON " + TABLA+"."+BaseColumns._ID +
+                        " = " + asociacion.tablaClaveForanea+"."+asociacion.columnaClaveForanea +
                     seleccion,
                 argumentosSeleccion))
         {
@@ -332,7 +342,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
 
                 List<E> listaEntidades = entidades.computeIfAbsent(id, k-> new ArrayList<>());
                 RepositorioSQLite<E> repo = (RepositorioSQLite<E>) getRepositorio(claseAsociacion);
-                listaEntidades.add(repo.extraerEntidad(cursor));
+                listaEntidades.add(repo.extraerEntidadYAnadirId(cursor));
             }
         }
 
@@ -340,7 +350,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
     }
 
     @Override
-    public Map<Long, List<T>> seleccionarPorAsociacionAMuchos(Class<?> claseAsociacion, long[] where) {
+    public <E extends Entidad> Map<Long, List<E>> seleccionarPorAsociacionAMuchos(Class<E> claseAsociacion, long[] where) {
         if (indiceAsociacionesAMuchos == null)
             throw new IllegalStateException("El índice de asociación a muchos debe estar " +
                     "inicializado antes de cualquier selección por asociación a muchos");
@@ -351,11 +361,11 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
             throw new IllegalStateException("No se ha encontrado la entidad " +
                     claseAsociacion.getSimpleName() + "en el índice de asociaciones a muchos");
 
-        Map<Long,List<T>> entidades = new HashMap<>();
+        Map<Long,List<E>> entidades = new HashMap<>();
 
         String seleccion = where == null
                 ? ""
-                : " WHERE " + asociacion.tablaIntermedia+"."+asociacion.columnaAsociacionEnIntermedia +
+                : " WHERE " + TABLA+"."+BaseColumns._ID +
                 (where.length == 1 ? " = ?" : " IN ("+queryParamsEn(where)+")");
 
         String[] argumentosSeleccion = where == null
@@ -364,22 +374,27 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
                 .mapToObj(String::valueOf)
                 .toArray(String[]::new);
 
+        Log.d(TAG, "seleccionarPorAsociacionAMuchos: ARGS" + Arrays.toString(argumentosSeleccion));
+
         try (Cursor cursor = baseDeDatos.rawQuery(
                 // SELECT TABLA.*, TABLA_INTERMEDIA.COLUMNA_ID_EN_INTERMEDIA
-                "SELECT " + TABLA+".*, " + asociacion.tablaIntermedia+"."+asociacion.columnaAsociacionEnIntermedia +
-                    " FROM " + TABLA +
-                        " INNER JOIN " + asociacion.tablaIntermedia +
-                        " ON " + asociacion.tablaIntermedia+"."+asociacion.columnaIdEnIntermedia +
-                        " = " + TABLA +"."+asociacion.columnaIdEntidad +
+                "SELECT " + asociacion.tablaObjetivo+".*, " + TABLA+"."+BaseColumns._ID +
+                    " FROM " + asociacion.tablaObjetivo +
+                    " INNER JOIN " + asociacion.tablaIntermedia +
+                        " ON " + asociacion.tablaIntermedia+"."+asociacion.columnaAsociacionEnIntermedia +
+                        " = " + asociacion.tablaObjetivo+"."+BaseColumns._ID +
+                    " INNER JOIN " + TABLA +
+                        " ON " + TABLA+"."+BaseColumns._ID +
+                        " = " + asociacion.tablaIntermedia+"."+asociacion.columnaIdEnIntermedia +
                     seleccion,
                 argumentosSeleccion))
         {
             while (cursor.moveToNext()) {
-                long id = cursor.getLong(
-                    cursor.getColumnIndexOrThrow(asociacion.columnaAsociacionEnIntermedia));
+                long id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID));
 
-                List<T> listaEntidades = entidades.computeIfAbsent(id, k-> new ArrayList<>());
-                listaEntidades.add(extraerEntidad(cursor));
+                List<E> listaEntidades = entidades.computeIfAbsent(id, k-> new ArrayList<>());
+                RepositorioSQLite<E> repositorio = (RepositorioSQLite<E>) getRepositorio(claseAsociacion);
+                listaEntidades.add(repositorio.extraerEntidadYAnadirId(cursor));
             }
         }
 
@@ -435,17 +450,17 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
 
     public static class AsociaciacionMuchosAMuchos {
         private final String tablaIntermedia;
-        private final String columnaIdEntidad;
+        private final String tablaObjetivo;
         private final String columnaIdEnIntermedia;
         private final String columnaAsociacionEnIntermedia;
 
-        public AsociaciacionMuchosAMuchos(String tablaIntermedia,
-                                          String columnaIdEntidad,
+        public AsociaciacionMuchosAMuchos(String tablaObjetivo,
+                                          String tablaIntermedia,
                                           String columnaIdEnIntermedia,
                                           String columnaAsociacionEnIntermedia)
         {
             this.tablaIntermedia = tablaIntermedia;
-            this.columnaIdEntidad = columnaIdEntidad;
+            this.tablaObjetivo = tablaObjetivo;
             this.columnaIdEnIntermedia = columnaIdEnIntermedia;
             this.columnaAsociacionEnIntermedia = columnaAsociacionEnIntermedia;
         }
@@ -455,7 +470,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
         public String toString() {
             return "AsociaciacionAMuchos{" +
                     "tablaIntermedia='" + tablaIntermedia + '\'' +
-                    ", columnaIdEntidad='" + columnaIdEntidad + '\'' +
+                    ", columnaIdEntidad='" + tablaObjetivo + '\'' +
                     ", columnaIdEnIntermedia='" + columnaIdEnIntermedia + '\'' +
                     ", columnaAsociacionEnIntermedia='" + columnaAsociacionEnIntermedia + '\'' +
                     '}';

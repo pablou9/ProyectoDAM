@@ -20,6 +20,10 @@ public class PetProtechApp extends Application {
         for (Modelo modelo : Modelo.values())
             modelo.initRepositorio(bd);
 
+        // Asocia repositorios
+        for (Modelo modelo : Modelo.values())
+            modelo.ejecutarAsociacionesRepositorio();
+
         // Inicializa fábricas de ViewModels
         for (FabricaViewModel fabrica : FabricaViewModel.values())
             fabrica.initFabrica(this, fabrica.clase());

@@ -28,8 +28,13 @@ public class MockRepositorio<T extends Entidad> implements Repositorio<T> {
     }
 
     @Override
-    public Map<Long, List<T>> seleccionarPorAsociacionAMuchos(Class<?> claseAsociacion, long[] where) {
+    public <E extends Entidad> Map<Long, List<E>> seleccionarPorAsociacionAMuchos(Class<E> claseAsociacion, long[] where) {
         return null;
+    }
+
+    @Override
+    public void setRepositoriosAsociados(Map<Class<? extends Entidad>, Repositorio<? extends Entidad>> contiene) {
+
     }
 
     @Override

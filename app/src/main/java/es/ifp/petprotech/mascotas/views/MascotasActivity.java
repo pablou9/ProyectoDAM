@@ -43,7 +43,7 @@ public class MascotasActivity extends ListaActivivity<Mascota> {
     }
 
     @Override
-    protected LiveData<List<Mascota>> getData() {
+    protected LiveData<List<Mascota>> getLista() {
         MascotasViewModel viewModel =
             new ViewModelProvider(this, MASCOTA.getFabrica()).get(MascotasViewModel.class);
 

@@ -80,7 +80,6 @@ public class Formulario {
     @NonNull
     private TextInputLayout crearTextInputLayout(CampoFormulario campo, Context context) {
         TextInputLayout input = new TextInputLayout(context);
-        Log.d(TAG, "crearTextInputLayout: anade id " + campo.getId());
         input.setId(campo.getId());
         input.setTag(campo.getNombre());
 

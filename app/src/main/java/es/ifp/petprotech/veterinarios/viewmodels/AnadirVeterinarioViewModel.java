@@ -55,7 +55,10 @@ public class AnadirVeterinarioViewModel extends ViewModel implements ValidadorIn
         return repositorio.seleccionarTodo();
     }
 
-    public boolean crearCentroVeterinario(ValoresFormulario valores, Mascota mascota) {
+    public boolean crearCentroVeterinario(ValoresFormulario valores,
+                                          Map<String, Boolean> diasDeApertura,
+                                          Mascota mascota)
+    {
         ResultadoValidacion resultado = validarInput(valores);
 
         if(resultado.contieneErrores()) {
@@ -71,6 +74,7 @@ public class AnadirVeterinarioViewModel extends ViewModel implements ValidadorIn
                 .telefono(valores.valor(TELEFONO_CENTRO.nombre()))
                 .apertura(valores.valor(APERTURA_CENTRO.nombre()))
                 .cierre(valores.valor(CIERRE_CENTRO.nombre()))
+                .dias(formatoDiasDeApertura(diasDeApertura))
                 .build();
 
         Veterinario veterinario = Veterinario.nuevoVeterinario()
@@ -83,6 +87,32 @@ public class AnadirVeterinarioViewModel extends ViewModel implements ValidadorIn
         centroVeterinario.anadirVeterinario(veterinario);
 
         return repositorio.crear(centroVeterinario);
+    }
+
+    private String formatoDiasDeApertura(Map<String,Boolean> diasDeApertura) {
+
+        String inicioSegmento = null;
+        String finalSegmento = null;
+
+        String horario = "";
+
+        for (String dia : diasDeApertura.keySet()) {
+            boolean abierto = Boolean.TRUE.equals(diasDeApertura.get(dia));
+
+            if (abierto) {
+                if (inicioSegmento == null)
+                    inicioSegmento = dia;
+                else
+                    finalSegmento = dia;
+            }
+            else {
+                horario = inicioSegmento + " - " + finalSegmento;
+                inicioSegmento = null;
+                finalSegmento = null;
+            }
+        }
+
+        return horario + inicioSegmento;
     }
 
     @Override
