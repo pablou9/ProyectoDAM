@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import es.ifp.petprotech.bd.Repositorio;
 import es.ifp.petprotech.veterinarios.model.Veterinario;
@@ -51,5 +53,16 @@ public class VeterinariosViewModel extends ViewModel {
         });
 
         return veterinario;
+    }
+
+    public void eliminarVeterinario() {
+        background.execute(() -> {
+            repositorio.eliminar(veterinario.getValue());
+
+            veterinarios.postValue(Objects.requireNonNull(veterinarios.getValue())
+                    .stream()
+                    .filter(enLista -> enLista.getId() != veterinario.getValue().getId())
+                    .collect(Collectors.toList()));
+        });
     }
 }

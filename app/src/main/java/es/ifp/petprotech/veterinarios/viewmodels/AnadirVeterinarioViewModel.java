@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import es.ifp.petprotech.R;
 import es.ifp.petprotech.app.datos.ValidadorInput;
@@ -45,9 +47,20 @@ public class AnadirVeterinarioViewModel extends ViewModel implements ValidadorIn
     private final Repositorio<CentroProfesional> repositorio;
 
     private final MutableLiveData<Map<String,Integer>> errores = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> veterinarioCreado = new MutableLiveData<>(false);
+
+    private final ExecutorService background = Executors.newSingleThreadExecutor();
 
     public AnadirVeterinarioViewModel(Repositorio<CentroProfesional> repositorio) {
         this.repositorio = repositorio;
+    }
+
+    public void reset() {
+        veterinarioCreado.setValue(false);
+    }
+
+    public MutableLiveData<Boolean> getVeterinarioCreado() {
+        return veterinarioCreado;
     }
 
     // Testing
@@ -55,7 +68,7 @@ public class AnadirVeterinarioViewModel extends ViewModel implements ValidadorIn
         return repositorio.seleccionarTodo();
     }
 
-    public boolean crearCentroVeterinario(ValoresFormulario valores,
+    public void crearCentroVeterinario(ValoresFormulario valores,
                                           Map<String, Boolean> diasDeApertura,
                                           Mascota mascota)
     {
@@ -63,7 +76,7 @@ public class AnadirVeterinarioViewModel extends ViewModel implements ValidadorIn
 
         if(resultado.contieneErrores()) {
             errores.setValue(resultado.getErrores());
-            return false;
+            return;
         }
 
         CentroProfesional centroVeterinario = CentroProfesional.nuevoCentro()
@@ -86,7 +99,12 @@ public class AnadirVeterinarioViewModel extends ViewModel implements ValidadorIn
         veterinario.anadirMascota(mascota);
         centroVeterinario.anadirVeterinario(veterinario);
 
-        return repositorio.crear(centroVeterinario);
+        background.execute(() -> {
+            boolean creado = repositorio.crear(centroVeterinario);
+
+            if (creado)
+                veterinarioCreado.postValue(true);
+        });
     }
 
     private String formatoDiasDeApertura(Map<String,Boolean> diasDeApertura) {

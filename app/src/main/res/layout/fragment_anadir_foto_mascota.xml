@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".mascotas.views.AnadirMascotaActivity">
+    tools:context=".mascotas.views.AnadirEntidadesActivity">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/foto"
@@ -29,18 +29,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/anadir_imagen"
-        app:layout_constraintBottom_toTopOf="@+id/controles_anadir_foto"
-        app:layout_constraintEnd_toEndOf="@+id/foto"
         app:layout_constraintStart_toStartOf="@+id/foto"
-        app:layout_constraintTop_toBottomOf="@+id/foto" />
-
-    <include
-        android:id="@+id/controles_anadir_foto"
-        layout="@layout/controles_anadir_mascota"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/foto"
+        app:layout_constraintEnd_toEndOf="@+id/foto"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -61,21 +61,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         startActivity(anadirMascota);
     }
 
-    protected void lanzarActividad(Class<?> clase, String data) {
+    protected void lanzarActividad(Class<?> clase, Bundle bundle) {
         Intent anadirMascota = new Intent(this, clase);
-        anadirMascota.putExtra("data", data);
+        anadirMascota.putExtra("data", bundle);
 
         startActivity(anadirMascota);
-    }
-
-    protected long extraerId() {
-        Intent intent = getIntent();
-        long id = intent.getLongExtra("data", -1);
-
-        if (id == -1)
-            throw new IllegalStateException("Debes proporcionar una id de entidad en esta actividad");
-
-        return id;
     }
 
 }

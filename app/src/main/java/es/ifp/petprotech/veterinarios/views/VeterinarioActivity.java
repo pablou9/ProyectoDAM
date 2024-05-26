@@ -9,12 +9,23 @@ import androidx.lifecycle.ViewModelProvider;
 
 import es.ifp.petprotech.R;
 import es.ifp.petprotech.app.datos.FormatoFechaTiempo;
-import es.ifp.petprotech.app.views.BaseActivity;
+import es.ifp.petprotech.app.views.EntidadActivity;
 import es.ifp.petprotech.centros.model.CentroProfesional;
 import es.ifp.petprotech.veterinarios.viewmodels.VeterinariosViewModel;
 
-public class VeterinarioActivity extends BaseActivity {
+public class VeterinarioActivity extends EntidadActivity {
 
+    private VeterinariosViewModel viewModel;
+
+    private TextView nombre;
+    private TextView especializacion;
+    private TextView nombreCentro;
+    private TextView direccionCentro;
+    private TextView diasTrabajoCentro;
+    private TextView horarioCentro;
+    private TextView telefonoCentro;
+    private TextView webCentro;
+    
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_veterinario;
@@ -26,22 +37,36 @@ public class VeterinarioActivity extends BaseActivity {
     }
 
     @Override
+    protected String mensajeAlertaEliminar() {
+        return getString(R.string.eliminar_veterinario);
+    }
+
+    @Override
+    protected void eliminarEntidad() {
+        viewModel.eliminarVeterinario();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        VeterinariosViewModel viewModel =
-            new ViewModelProvider(this, VETERINARIO.getFabrica()).get(VeterinariosViewModel.class);
+        viewModel = new ViewModelProvider(this, VETERINARIO.getFabrica()).get(VeterinariosViewModel.class);
+
+        nombre = findViewById(R.id.nombre_veterinario);
+        especializacion = findViewById(R.id.especializacion);
+        nombreCentro = findViewById(R.id.nombre_centro);
+        direccionCentro = findViewById(R.id.direccion_centro);
+        diasTrabajoCentro = findViewById(R.id.dias_trabajo_centro);
+        horarioCentro = findViewById(R.id.horario_centro);
+        telefonoCentro = findViewById(R.id.telefono_centro);
+        webCentro = findViewById(R.id.pagina_web_centro);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         long idVeterinario = extraerId();
-
-        TextView nombre = findViewById(R.id.nombre_veterinario);
-        TextView especializacion = findViewById(R.id.especializacion);
-        TextView nombreCentro = findViewById(R.id.nombre_centro);
-        TextView direccionCentro = findViewById(R.id.direccion_centro);
-        TextView diasTrabajoCentro = findViewById(R.id.dias_trabajo_centro);
-        TextView horarioCentro = findViewById(R.id.horario_centro);
-        TextView telefonoCentro = findViewById(R.id.telefono_centro);
-        TextView webCentro = findViewById(R.id.pagina_web_centro);
 
         viewModel.getVeterinario(idVeterinario).observe(this, veterinario -> {
             CentroProfesional centroVeterinario = veterinario.getCentro();

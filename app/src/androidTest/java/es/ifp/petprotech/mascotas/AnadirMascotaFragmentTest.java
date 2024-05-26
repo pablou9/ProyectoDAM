@@ -37,23 +37,23 @@ import java.util.List;
 import java.util.Objects;
 
 import es.ifp.petprotech.R;
-import es.ifp.petprotech.mascotas.views.AnadirMascotaActivity;
-import es.ifp.petprotech.mascotas.views.InfoMascotaFragment;
+import es.ifp.petprotech.mascotas.views.AnadirEntidadesActivity;
+import es.ifp.petprotech.mascotas.views.AnadirMascotaFragment;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class InfoMascotaFragmentTest {
+public class AnadirMascotaFragmentTest {
 
     @Rule
-    public ActivityScenarioRule<AnadirMascotaActivity> rule =
-        new ActivityScenarioRule<>(AnadirMascotaActivity.class);
+    public ActivityScenarioRule<AnadirEntidadesActivity> rule =
+        new ActivityScenarioRule<>(AnadirEntidadesActivity.class);
 
-    private FragmentScenario<InfoMascotaFragment> scenario;
+    private FragmentScenario<AnadirMascotaFragment> scenario;
 
     @Before
     public void init() {
         scenario = FragmentScenario.launchInContainer(
-                InfoMascotaFragment.class, null, androidx.appcompat.R.style.Theme_AppCompat);
+                AnadirMascotaFragment.class, null, androidx.appcompat.R.style.Theme_AppCompat);
     }
 
     @After

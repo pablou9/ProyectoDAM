@@ -211,6 +211,9 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
     }
 
     private AsociaciacionMuchosAMuchos extraerAsociacionAMuchos(Entidad asociar) {
+        if (asociar == null)
+            throw new IllegalArgumentException("Estás tratando de asociar una entidad nula");
+
         if (asociar.getId() < 1)
             throw new IllegalArgumentException("La entidad que se va a asociar debe de haber " +
                     "sido insertada a la base de datos antes de la asociación");
@@ -357,6 +360,8 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
 
         AsociaciacionUnoAMuchos asociacion = indiceAsociaciones.get(claseAsociacion);
 
+        Log.d(TAG, "seleccionarMuchosAUno: asociacion" + asociacion);
+
         if (asociacion == null)
             throw new IllegalStateException("No se ha encontrado la entidad " +
                 claseAsociacion.getSimpleName() + "en el índice de asociaciones a muchos");
@@ -468,6 +473,12 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
 
     @Override
     public boolean eliminar(T entidad) {
+        if (entidad == null)
+            throw new IllegalArgumentException("La entidad no puede ser null");
+
+        if (entidad.getId() < 1)
+            throw new IllegalArgumentException("La entidad debe tener una id asignada");
+
         antesDeEliminar(entidad);
         int registrosEliminados = baseDeDatos.delete(
                 TABLA,

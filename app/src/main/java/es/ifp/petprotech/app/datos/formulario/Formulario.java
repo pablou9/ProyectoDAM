@@ -1,7 +1,6 @@
 package es.ifp.petprotech.app.datos.formulario;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -34,10 +33,9 @@ public class Formulario {
     private final List<View> campos = new ArrayList<>();
     private boolean habilitado;
     private boolean usuarioHaInteractuado;
+    private Consumer<Boolean> onUsuarioInteraccionListener;
 
     private final Set<String> camposConInput = new HashSet<>();
-
-    private static final String TAG = "Formulario";
 
     /**
      * Añade campos a este formulario. Cada campo está respresentado por un input en el layout objetivo
@@ -108,9 +106,14 @@ public class Formulario {
                 else
                     camposConInput.add(campo.getNombre());
 
-                usuarioHaInteractuado = !camposConInput.isEmpty();
+                usuarioHaInteractuado = alMenosUnCampoTieneInput();
+                onUsuarioInteraccionListener.accept(usuarioHaInteractuado);
             }
         });
+    }
+
+    private boolean alMenosUnCampoTieneInput() {
+        return !camposConInput.isEmpty();
     }
 
     /**
@@ -220,6 +223,10 @@ public class Formulario {
         }
 
         this.habilitado = habilitado;
+    }
+
+    public void setOnUsuarioInteraccionListener(Consumer<Boolean> onUsuarioInteraccionListener) {
+        this.onUsuarioInteraccionListener = onUsuarioInteraccionListener;
     }
 
     private void setHabilitadoHijos(ViewGroup grupo, boolean habilitado) {

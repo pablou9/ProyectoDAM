@@ -1,6 +1,7 @@
 package es.ifp.petprotech.mascotas.views;
 
 import static es.ifp.petprotech.app.model.FabricaViewModel.MASCOTA;
+import static es.ifp.petprotech.app.viewmodels.NavegacionAnadirEntidadesViewModel.Pantalla;
 
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -19,27 +20,28 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.List;
 
 import es.ifp.petprotech.R;
+import es.ifp.petprotech.app.viewmodels.NavegacionAnadirEntidadesViewModel;
 import es.ifp.petprotech.app.views.AdaptadorLista;
+import es.ifp.petprotech.app.views.ListaActivity;
 import es.ifp.petprotech.app.views.ViewHolderLista;
-import es.ifp.petprotech.app.views.ListaActivivity;
 import es.ifp.petprotech.mascotas.model.Mascota;
 import es.ifp.petprotech.mascotas.viewmodels.MascotasViewModel;
 
-public class MascotasActivity extends ListaActivivity<Mascota> {
+public class MascotasActivity extends ListaActivity<Mascota> {
 
     @Override
-    protected AdaptadorLista<Mascota> adaptador() {
+    protected AdaptadorLista<Mascota> nuevoAdaptador() {
         return new MascotasAdapter();
-    }
-
-    @Override
-    protected Class<?> anadirEntidadActivity() {
-        return AnadirMascotaActivity.class;
     }
 
     @Override
     protected Class<?> entidadActivity() {
         return MascotaActivity.class;
+    }
+
+    @Override
+    protected List<NavegacionAnadirEntidadesViewModel.Pantalla> pantallasNuevaEntidad() {
+        return List.of(Pantalla.ANADIR_MASCOTA, Pantalla.ANADIR_FOTO_MASCOTA, Pantalla.ANADIR_VETERINARIO);
     }
 
     @Override

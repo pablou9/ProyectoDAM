@@ -11,26 +11,39 @@ import android.widget.TextView;
 import androidx.lifecycle.ViewModelProvider;
 
 import es.ifp.petprotech.R;
-import es.ifp.petprotech.app.views.BaseActivity;
+import es.ifp.petprotech.app.views.EntidadActivity;
 import es.ifp.petprotech.centros.model.CentroProfesional;
 import es.ifp.petprotech.mascotas.model.Mascota;
 import es.ifp.petprotech.mascotas.viewmodels.MascotasViewModel;
 import es.ifp.petprotech.veterinarios.model.Veterinario;
 
-public class MascotaActivity extends BaseActivity {
+public class MascotaActivity extends EntidadActivity {
 
     private ImageView foto;
     private TextView nombre;
     private TextView veterinario;
     private TextView centroVeterinario;
 
+    private MascotasViewModel viewModel;
+
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_mascota;
     }
+
     @Override
     protected boolean mostrarGoBack() {
         return true;
+    }
+
+    @Override
+    protected String mensajeAlertaEliminar() {
+        return getString(R.string.eliminar_mascota);
+    }
+
+    @Override
+    protected void eliminarEntidad() {
+        viewModel.eliminarMascota();
     }
 
     @Override
@@ -44,9 +57,7 @@ public class MascotaActivity extends BaseActivity {
         veterinario = findViewById(R.id.veterinario);
         centroVeterinario = findViewById(R.id.centro_veterinario);
 
-        MascotasViewModel viewModel  =
-            new ViewModelProvider(this, MASCOTA.getFabrica()).get(MascotasViewModel.class);
-
+        viewModel = new ViewModelProvider(this, MASCOTA.getFabrica()).get(MascotasViewModel.class);
         viewModel.getMascota(idMascota).observe(this, this::popularVista);
     }
 

@@ -11,9 +11,7 @@ import java.util.function.Consumer;
 
 import es.ifp.petprotech.bd.Entidad;
 
-public abstract class AdaptadorLista<T extends Entidad>
-        extends RecyclerView.Adapter<ViewHolderLista>
-{
+public abstract class AdaptadorLista<T extends Entidad> extends RecyclerView.Adapter<ViewHolderLista> {
 
     private List<T> data;
     private Consumer<T> gestorClicks;
@@ -46,6 +44,11 @@ public abstract class AdaptadorLista<T extends Entidad>
     @Override
     public void onViewRecycled(@NonNull ViewHolderLista holder) {
         super.onViewRecycled(holder);
-        holder.soltarVistas();
+        //holder.soltarVistas();
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull ViewHolderLista holder) {
+        super.onViewDetachedFromWindow(holder);
     }
 }

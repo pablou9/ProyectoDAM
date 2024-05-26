@@ -7,6 +7,7 @@ import static es.ifp.petprotech.veterinarios.datos.ContratoVeterinarios.Columnas
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import es.ifp.petprotech.mascotas.model.Mascota;
 import es.ifp.petprotech.veterinarios.model.Veterinario;
 
 public class VeterinariosRepositorio extends RepositorioSQLite<Veterinario> {
+    private static final String TAG = "VeterinariosRepositorio";
 
     public VeterinariosRepositorio(BaseDeDatos<SQLiteDatabase> baseDeDatos) {
         super(baseDeDatos, ContratoVeterinarios.NOMBRE_TABLA);
@@ -46,6 +48,11 @@ public class VeterinariosRepositorio extends RepositorioSQLite<Veterinario> {
 
     @Override
     protected void despuesDeCrear(Veterinario veterinario) {
+        List<Mascota> mascotas = veterinario.getMascotas();
+
+        if (mascotas == null)
+            return;
+
         for (Mascota mascota : veterinario.getMascotas()) {
             asociarMuchos(veterinario, mascota);
         }
@@ -63,12 +70,17 @@ public class VeterinariosRepositorio extends RepositorioSQLite<Veterinario> {
                 seleccionarMuchosAMuchos(
                         Mascota.class, idsVeterinarios);
 
+        Log.d(TAG, "despuesDeSeleccionar: MASCOTAS: " + mascotasVeterinarios);
+
         for (Veterinario veterinario : veterinarios) {
             List<Mascota> mascotas = mascotasVeterinarios.get(veterinario.getId());
             List<CentroProfesional> centrosVeterinarios = centros.get(veterinario.getId());
 
             if (mascotas != null && !mascotas.isEmpty()) {
                 veterinario.setMascotas(mascotas);
+            }
+
+            if (centrosVeterinarios != null && !centrosVeterinarios.isEmpty()) {
                 veterinario.setCentro(Objects.requireNonNull(centrosVeterinarios).get(0));
             }
         }

@@ -15,6 +15,7 @@
     <string name="veterinario_preferido">Veterinario de preferencia</string>
     <string name="anadir_mascota">Añadir Mascota</string>
     <string name="atras">← Atrás</string>
+    <string name="cancelar">← Cancelar</string>
     <string name="siguiente">Siguiente →</string>
     <string name="mas_tarde">Más Tarde →</string>
     <string name="nueva_mascota">Nueva Mascota</string>
@@ -52,5 +53,8 @@
     <string name="sabado">Sábado</string>
     <string name="domingo">Domingo</string>
     <string name="dias">Días</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="eliminar_mascota">"¿Seguro que deseas eliminar esta mascota?"</string>
+    <string name="eliminar_veterinario">"¿Seguro que deseas eliminar este veterinario?"</string>
 
 </resources>

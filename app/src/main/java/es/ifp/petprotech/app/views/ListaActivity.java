@@ -12,9 +12,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.List;
 
 import es.ifp.petprotech.R;
+import es.ifp.petprotech.app.viewmodels.NavegacionAnadirEntidadesViewModel;
 import es.ifp.petprotech.bd.Entidad;
+import es.ifp.petprotech.mascotas.views.AnadirEntidadesActivity;
 
-public abstract class ListaActivivity<T extends Entidad> extends BaseActivity {
+public abstract class ListaActivity<T extends Entidad> extends BaseActivity {
+
+    private AdaptadorLista<T> adaptadorLista;
 
     @Override
     protected final int getLayoutResource() {
@@ -25,18 +29,18 @@ public abstract class ListaActivivity<T extends Entidad> extends BaseActivity {
     protected final boolean mostrarGoBack() {
         return true;
     }
-
     protected abstract LiveData<List<T>> getLista();
-    protected abstract AdaptadorLista<T> adaptador();
-    protected abstract Class<?> anadirEntidadActivity();
+    protected abstract AdaptadorLista<T> nuevoAdaptador();
     protected abstract Class<?> entidadActivity();
+
+    protected abstract List<NavegacionAnadirEntidadesViewModel.Pantalla> pantallasNuevaEntidad();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         FloatingActionButton fab = findViewById(R.id.boton_anadir);
-        fab.setOnClickListener(e -> lanzarActividad(anadirEntidadActivity()));
+        fab.setOnClickListener(e -> lanzarActividadCrearEntidad());
 
         RecyclerView lista = findViewById(R.id.lista);
 
@@ -45,12 +49,29 @@ public abstract class ListaActivivity<T extends Entidad> extends BaseActivity {
                 lista.getContext(),
                 LinearLayoutManager.VERTICAL));
 
-        AdaptadorLista<T> adaptadorLista = adaptador();
+        adaptadorLista = nuevoAdaptador();
         adaptadorLista.setGestorDeClicksEnItems(entidad ->
                 lanzarActividad(entidadActivity(), entidad.getId()));
 
         lista.setAdapter(adaptadorLista);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         getLista().observe(this, adaptadorLista::setData);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    private void lanzarActividadCrearEntidad() {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(
+            NavegacionAnadirEntidadesViewModel.PANTALLAS, pantallasNuevaEntidad().get(0));
+
+        lanzarActividad(AnadirEntidadesActivity.class, bundle);
     }
 }

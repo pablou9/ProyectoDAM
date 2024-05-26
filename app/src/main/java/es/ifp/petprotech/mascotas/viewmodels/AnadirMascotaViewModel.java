@@ -7,11 +7,11 @@ import static es.ifp.petprotech.mascotas.viewmodels.AnadirMascotaViewModel.Campo
 
 import android.net.Uri;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,39 +63,8 @@ public class AnadirMascotaViewModel extends ViewModel implements ValidadorInput 
         }
     }
 
-    public enum Accion {
-        ANADIR_INFO(0, "anadir_info"),
-        ANADIR_FOTO(1, "anadir_foto"),
-        ANADIR_VETERINARIO(2, "anadir_veterinario"),
-        TERMINAR(3, "terminar");
-
-        private final String tag;
-        private final int orden;
-
-        Accion(int orden, String tag) {
-            this.tag = tag;
-            this.orden = orden;
-        }
-
-        public String getTag() {
-            return tag;
-        }
-
-        public int getOrden() {
-            return orden;
-        }
-
-        public static Accion getAccion(int posicion) {
-            return Arrays.stream(Accion.values())
-                .filter(accion -> accion.orden == posicion)
-                .findFirst()
-                .orElseThrow(() ->
-                    new IllegalArgumentException("No existe la posición " + posicion + " para acciones"));
-        }
-    }
-
-    private final MutableLiveData<Accion> accionEnProceso = new MutableLiveData<>(Accion.ANADIR_VETERINARIO);
     private final MutableLiveData<Map<String,Integer>> errores = new MutableLiveData<>(new HashMap<>());
+    private final MutableLiveData<Boolean> mascotaCreada = new MutableLiveData<>(false);
 
     private Mascota mascota;
     private TipoMascota tipoMascota;
@@ -105,18 +74,15 @@ public class AnadirMascotaViewModel extends ViewModel implements ValidadorInput 
     private final ExecutorService background = Executors.newSingleThreadExecutor();
 
     public AnadirMascotaViewModel(Repositorio<Mascota> mascotasRepositorio,
-                                  SharedPreferencesRepositorio preferenciasRepositorio,
-                                  Accion accion)
+                                  SharedPreferencesRepositorio preferenciasRepositorio)
     {
         this.mascotasRepositorio = mascotasRepositorio;
         this.preferenciasRepositorio = preferenciasRepositorio;
-        this.accionEnProceso.setValue(accion);
     }
 
-    public AnadirMascotaViewModel(Repositorio<Mascota> mascotasRepositorio,
-                                  SharedPreferencesRepositorio preferenciasRepositorio)
-    {
-        this(mascotasRepositorio, preferenciasRepositorio, Accion.ANADIR_INFO);
+
+    public void reset() {
+        mascotaCreada.setValue(false);
     }
 
     public Mascota getMascota() {
@@ -128,28 +94,31 @@ public class AnadirMascotaViewModel extends ViewModel implements ValidadorInput 
         return mascotasRepositorio.seleccionarTodo();
     }
 
-    public MutableLiveData<Accion> getAccionEnProceso() {
-        return accionEnProceso;
+    public LiveData<Boolean> getMascotaCreada() {
+        return mascotaCreada;
     }
 
     public void setTipoMascota(TipoMascota tipoMascota) {
         this.tipoMascota = tipoMascota;
     }
 
-    public MutableLiveData<Map<String, Integer>> getErrores() {
+    public LiveData<Map<String, Integer>> getErrores() {
         return errores;
     }
 
     public void setFotoMascota(Uri uri) {
-        preferenciasRepositorio.guardar(ContratoMascotas.URI_FOTO, uri.toString());
+        if (uri != null)
+            preferenciasRepositorio.guardar(
+                    ContratoMascotas.URI_FOTO+"_"+mascota.getNombre()+"_"+mascota.getEspecie(),
+                    uri.toString());
     }
 
-    public void crearMascota(ValoresFormulario valoresMascota) {
+    public boolean crearMascota(ValoresFormulario valoresMascota) {
         ResultadoValidacion resultado = validarInput(valoresMascota);
 
         if (resultado.contieneErrores()) {
             errores.setValue(resultado.getErrores());
-            return;
+            return false;
         }
 
         String especie = tipoMascota.esPerroOGato()
@@ -177,28 +146,11 @@ public class AnadirMascotaViewModel extends ViewModel implements ValidadorInput 
 
             if (creada) {
                 this.mascota = mascota;
-                siguienteAccion();
+                mascotaCreada.postValue(true);
             }
         });
-    }
 
-    public void siguienteAccion() {
-        Accion accion = accionEnProceso.getValue();
-
-        if (accion == null || accion.orden == Accion.TERMINAR.orden)
-            throw new IllegalStateException("No se ha podido ir a la siguiente acción: " +
-                (accion == null ? "no hay accion" : accion.toString()));
-
-        accionEnProceso.postValue(Accion.getAccion(accion.getOrden() + 1));
-    }
-
-    public void accionAnterior() {
-        Accion accion = accionEnProceso.getValue();
-
-        if (accion == null || accion.orden == 0)
-            throw new IllegalStateException("No se ha podido ir a la acción anterior");
-
-        accionEnProceso.setValue(Accion.getAccion(accion.getOrden() - 1));
+        return true;
     }
 
     @Override

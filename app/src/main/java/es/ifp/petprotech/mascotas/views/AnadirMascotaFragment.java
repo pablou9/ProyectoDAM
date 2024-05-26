@@ -12,12 +12,10 @@ import static es.ifp.petprotech.mascotas.viewmodels.AnadirMascotaViewModel.TipoM
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
@@ -25,22 +23,23 @@ import java.util.List;
 
 import es.ifp.petprotech.R;
 import es.ifp.petprotech.app.datos.CampoFormulario;
-import es.ifp.petprotech.app.views.DialogoCalendario;
 import es.ifp.petprotech.app.datos.formulario.Formulario;
+import es.ifp.petprotech.app.viewmodels.NavegacionAnadirEntidadesViewModel;
+import es.ifp.petprotech.app.views.AnadirEntidadFragment;
+import es.ifp.petprotech.app.views.DialogoCalendario;
 import es.ifp.petprotech.mascotas.viewmodels.AnadirMascotaViewModel;
 
-public class InfoMascotaFragment extends Fragment {
-
-    private Button siguiente;
+public class AnadirMascotaFragment extends AnadirEntidadFragment {
 
     private Formulario formulario;
 
     private final List<ImageView> tiposMascota = new ArrayList<>();
 
     private AnadirMascotaViewModel viewModel;
+    private NavegacionAnadirEntidadesViewModel navegacionViewModel;
 
-    public InfoMascotaFragment() {
-        super(R.layout.fragment_info_mascota);
+    public AnadirMascotaFragment() {
+        super(R.layout.fragment_anadir_mascota);
     }
 
     public Formulario getFormulario() {
@@ -48,14 +47,26 @@ public class InfoMascotaFragment extends Fragment {
     }
 
     @Override
+    public void crearEntidad() {
+        viewModel.crearMascota(formulario.getValores());
+    }
+
+    @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        viewModel = new ViewModelProvider(requireActivity(), ANADIR_MASCOTA.getFabrica()).get(AnadirMascotaViewModel.class);
+
+        navegacionViewModel = new ViewModelProvider(
+                requireActivity()).get(NavegacionAnadirEntidadesViewModel.class);
+
+        viewModel = new ViewModelProvider(
+                requireActivity(), ANADIR_MASCOTA.getFabrica()).get(AnadirMascotaViewModel.class);
     }
 
     @Override
     public void onDetach() {
+        viewModel.reset();
         viewModel = null;
+        navegacionViewModel = null;
         super.onDetach();
     }
 
@@ -63,21 +74,19 @@ public class InfoMascotaFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (viewModel == null)
+        if (viewModel == null || navegacionViewModel == null)
             return;
 
         inicializarFormulario(view);
         inicializarTiposDeMascota(view);
 
-        Button atras = view.findViewById(R.id.atras);
-        atras.setVisibility(View.INVISIBLE);
-
-        siguiente = view.findViewById(R.id.siguiente);
-        siguiente.setText(R.string.siguiente);
-        siguiente.setOnClickListener(e -> siguiente());
-
-        viewModel.getErrores().observe(getViewLifecycleOwner(),
+        viewModel.getErrores().observe(requireActivity(),
                 errores -> formulario.mostarErrores(getContext(), errores));
+
+        viewModel.getMascotaCreada().observe(requireActivity(), creada -> {
+            if (creada)
+                navegacionViewModel.siguiente();
+        });
     }
 
     private CampoFormulario.AccionCampoFormulario accionCalendario() {
@@ -99,6 +108,8 @@ public class InfoMascotaFragment extends Fragment {
                 new CampoFormulario(FECHA_NACIMIENTO.nombre(), getString(R.string.fecha_nacimiento), accionCalendario()),
                 new CampoFormulario(CHIP.name(), getString(R.string.numero_chip))
         );
+
+        formulario.setOnUsuarioInteraccionListener(navegacionViewModel::registrarInteraccionDeUsuario);
 
         formulario.setHabilitado(false);
     }
@@ -125,12 +136,6 @@ public class InfoMascotaFragment extends Fragment {
                 : R.string.especie);
 
         formulario.setHabilitado(true);
-        siguiente.setText(R.string.siguiente);
         formulario.cambiarHint(RAZA_ESPECIE.nombre(), hint);
     }
-
-    private void siguiente() {
-        viewModel.crearMascota(formulario.getValores());
-    }
-
 }

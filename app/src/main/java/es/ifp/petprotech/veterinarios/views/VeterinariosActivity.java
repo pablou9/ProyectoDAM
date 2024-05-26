@@ -18,27 +18,28 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.List;
 
 import es.ifp.petprotech.R;
+import es.ifp.petprotech.app.viewmodels.NavegacionAnadirEntidadesViewModel;
 import es.ifp.petprotech.app.views.AdaptadorLista;
-import es.ifp.petprotech.app.views.ListaActivivity;
+import es.ifp.petprotech.app.views.ListaActivity;
 import es.ifp.petprotech.app.views.ViewHolderLista;
 import es.ifp.petprotech.veterinarios.model.Veterinario;
 import es.ifp.petprotech.veterinarios.viewmodels.VeterinariosViewModel;
 
-public class VeterinariosActivity extends ListaActivivity<Veterinario> {
+public class VeterinariosActivity extends ListaActivity<Veterinario> {
 
     @Override
-    protected AdaptadorLista<Veterinario> adaptador() {
+    protected AdaptadorLista<Veterinario> nuevoAdaptador() {
         return new VeterinariosActivity.VeterinariosAdapter();
-    }
-
-    @Override
-    protected Class<?> anadirEntidadActivity() {
-        return AnadirVeterinarioActivity.class;
     }
 
     @Override
     protected Class<?> entidadActivity() {
         return VeterinarioActivity.class;
+    }
+
+    @Override
+    protected List<NavegacionAnadirEntidadesViewModel.Pantalla> pantallasNuevaEntidad() {
+        return List.of(NavegacionAnadirEntidadesViewModel.Pantalla.ANADIR_VETERINARIO);
     }
 
     @Override
