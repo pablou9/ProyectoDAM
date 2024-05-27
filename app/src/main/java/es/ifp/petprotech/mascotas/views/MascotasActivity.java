@@ -59,7 +59,7 @@ public class MascotasActivity extends ListaActivity<Mascota> {
 
         public MascotaViewHolder(View view) {
             super(view);
-            texto = view.findViewById(R.id.nombre_medicacion);
+            texto = view.findViewById(R.id.texto_item);
             icono = view.findViewById(R.id.icono);
         }
 

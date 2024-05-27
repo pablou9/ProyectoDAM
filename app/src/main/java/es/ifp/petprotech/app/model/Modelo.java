@@ -175,8 +175,6 @@ public enum Modelo {
                         ContratoEventos.Columnas.MEDICAMENTO_ID
                 )));
 
-
-
         return repositorio;
     }
 
@@ -204,6 +202,7 @@ public enum Modelo {
     private static void asociacionesMedicacion(Repositorio<? extends Entidad> repositorio) {
         repositorio.setRepositoriosAsociados(Map.of(
                 Mascota.class, MASCOTA.repositorio,
-                Medicamento.class, MEDICAMENTO.repositorio));
+                Medicamento.class, MEDICAMENTO.repositorio,
+                Evento.class, EVENTO.repositorio));
     }
 }

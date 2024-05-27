@@ -15,6 +15,8 @@ import java.util.function.Function;
 import es.ifp.petprotech.app.PetProtechApp;
 import es.ifp.petprotech.app.datos.SharedPreferencesRepositorio;
 import es.ifp.petprotech.centros.model.CentroProfesional;
+import es.ifp.petprotech.eventos.model.Evento;
+import es.ifp.petprotech.eventos.viewmodels.EventosViewModel;
 import es.ifp.petprotech.mascotas.model.Mascota;
 import es.ifp.petprotech.mascotas.viewmodels.AnadirMascotaViewModel;
 import es.ifp.petprotech.mascotas.viewmodels.MascotasViewModel;
@@ -54,7 +56,13 @@ public enum FabricaViewModel {
     MEDICACION(MedicacionViewModel.class,
             context ->
                 new MedicacionViewModel(
-                Modelo.getRepositorio(Modelo.MEDICACION, Medicacion.class)));
+                Modelo.getRepositorio(Modelo.MEDICACION, Medicacion.class),
+                Modelo.getRepositorio(Modelo.MASCOTA, Mascota.class),
+                Modelo.getRepositorio(Modelo.MEDICAMENTO, Medicamento.class))),
+    EVENTO(EventosViewModel.class,
+            context ->
+                new EventosViewModel(
+                Modelo.getRepositorio(Modelo.EVENTO, Evento.class)));
 
 
     private final Function<Context, ? extends ViewModel> constructorViewModel;

@@ -1,6 +1,7 @@
 package es.ifp.petprotech.app.views;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -29,6 +30,10 @@ public abstract class ListaActivity<T extends Entidad> extends BaseActivity {
     protected final boolean mostrarGoBack() {
         return true;
     }
+
+    protected boolean mostrarActionButton() {
+        return true;
+    }
     protected abstract LiveData<List<T>> getLista();
     protected abstract AdaptadorLista<T> nuevoAdaptador();
     protected abstract Class<?> entidadActivity();
@@ -40,7 +45,11 @@ public abstract class ListaActivity<T extends Entidad> extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         FloatingActionButton fab = findViewById(R.id.boton_anadir);
-        fab.setOnClickListener(e -> lanzarActividadCrearEntidad());
+
+        if (mostrarActionButton())
+            fab.setOnClickListener(e -> lanzarActividadCrearEntidad());
+
+        else fab.setVisibility(View.GONE);
 
         RecyclerView lista = findViewById(R.id.lista);
 
@@ -67,7 +76,7 @@ public abstract class ListaActivity<T extends Entidad> extends BaseActivity {
         super.onStop();
     }
 
-    private void lanzarActividadCrearEntidad() {
+    protected void lanzarActividadCrearEntidad() {
         Bundle bundle = new Bundle();
         List<NavegacionAnadirEntidadesViewModel.Pantalla> pantallas = pantallasNuevaEntidad();
 

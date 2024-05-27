@@ -73,6 +73,10 @@ public class MascotasViewModel extends ViewModel {
         return mascota;
     }
 
+    public Mascota queryMascota(long id) {
+        return repositorio.seleccionarPorId(id);
+    }
+
     public void eliminarMascota() {
         background.execute(() -> {
             repositorio.eliminar(mascota.getValue());

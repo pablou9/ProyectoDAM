@@ -23,7 +23,7 @@
         app:layout_constraintGuide_percent="0.25" />
 
     <TextView
-        android:id="@+id/nombre_medicacion"
+        android:id="@+id/texto_item"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -45,8 +45,8 @@
         android:gravity="top|start"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/nombre_medicacion"
-        app:layout_constraintTop_toBottomOf="@+id/nombre_medicacion"
+        app:layout_constraintStart_toStartOf="@+id/texto_item"
+        app:layout_constraintTop_toBottomOf="@+id/texto_item"
         tools:text="Cada 8 horas - 5 días" />
 
     <TextView
@@ -55,7 +55,7 @@
         android:layout_height="0dp"
         android:layout_marginEnd="16dp"
         android:gravity="bottom|center"
-        app:layout_constraintBottom_toBottomOf="@+id/nombre_medicacion"
+        app:layout_constraintBottom_toBottomOf="@+id/texto_item"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="1/2 pastilla" />

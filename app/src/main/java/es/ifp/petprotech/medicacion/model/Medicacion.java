@@ -60,6 +60,17 @@ public class Medicacion extends Entidad {
     }
 
     @Override
+    public String toString() {
+        return "Medicacion{" +
+                "mascota=" + mascota +
+                ", medicamento=" + medicamento +
+                ", cantidad='" + cantidad + '\'' +
+                ", horas=" + horas +
+                ", dias=" + dias +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

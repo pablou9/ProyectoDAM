@@ -5,6 +5,7 @@ import static es.ifp.petprotech.medicacion.viewmodels.AnadirMedicacionViewModel.
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,18 +18,39 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.util.function.Consumer;
+
 import es.ifp.petprotech.R;
 import es.ifp.petprotech.app.datos.CampoFormulario;
 import es.ifp.petprotech.app.datos.formulario.Formulario;
 import es.ifp.petprotech.app.model.FabricaViewModel;
-import es.ifp.petprotech.mascotas.viewmodels.MascotasViewModel;
+import es.ifp.petprotech.mascotas.model.Mascota;
 import es.ifp.petprotech.medicacion.viewmodels.AnadirMedicacionViewModel;
 
 public class MedicacionDialogo extends DialogFragment {
     private static final String TAG = "MedicacionDialogo";
 
+    private final Mascota mascota;
+    private Consumer<Boolean> onDismiss;
+
+    public MedicacionDialogo(Mascota mascota) {
+        this.mascota = mascota;
+    }
+
+    public MedicacionDialogo(Mascota mascota, Consumer<Boolean> onDismiss) {
+        this.mascota = mascota;
+        this.onDismiss = onDismiss;
+    }
+
     private Formulario formulario;
     private AnadirMedicacionViewModel viewModel;
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (onDismiss != null)
+            onDismiss.accept(true);
+    }
 
     @Override
     public void onResume() {
@@ -37,7 +59,7 @@ public class MedicacionDialogo extends DialogFragment {
         AlertDialog dialog = (AlertDialog)getDialog();
 
         if(dialog != null) {
-            Button positiveButton = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
+            Button positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(v -> {
                 boolean anadida = anadirMedicacion(formulario);
                 Log.d(TAG, "onResume: anadido: " + anadida);
@@ -87,11 +109,7 @@ public class MedicacionDialogo extends DialogFragment {
     }
 
     private boolean anadirMedicacion(Formulario formulario) {
-        MascotasViewModel mascotasViewModel =
-            new ViewModelProvider(requireActivity(), FabricaViewModel.MASCOTA.getFabrica())
-                    .get(MascotasViewModel.class);
-
         return viewModel.anadirMedicacionAMascota(
-                formulario.getValores(), mascotasViewModel.getMascota());
+                formulario.getValores(), mascota);
     }
 }

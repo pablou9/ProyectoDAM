@@ -69,7 +69,7 @@ public class MascotaActivity extends EntidadActivity {
     }
 
     private void mostrarDialogoMedicamento() {
-        new MedicacionDialogo().show(getSupportFragmentManager(), "MEDICACION_DIALOGO");
+        new MedicacionDialogo(viewModel.getMascota()).show(getSupportFragmentManager(), "MEDICACION_DIALOGO");
     }
 
     private void mostrarDialogoCita() {

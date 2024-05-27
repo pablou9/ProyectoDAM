@@ -23,7 +23,7 @@
         app:layout_constraintGuide_percent="0.25" />
 
     <TextView
-        android:id="@+id/nombre_medicacion"
+        android:id="@+id/texto_item"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"

@@ -39,8 +39,13 @@ public class MedicacionMascotasActivity extends ListaActivity<Mascota> {
     }
 
     @Override
+    protected boolean mostrarActionButton() {
+        return false;
+    }
+
+    @Override
     protected List<NavegacionAnadirEntidadesViewModel.Pantalla> pantallasNuevaEntidad() {
-        return List.of(NavegacionAnadirEntidadesViewModel.Pantalla.ANADIR_MASCOTA, NavegacionAnadirEntidadesViewModel.Pantalla.ANADIR_FOTO_MASCOTA, NavegacionAnadirEntidadesViewModel.Pantalla.ANADIR_VETERINARIO);
+        return List.of();
     }
 
     @Override
@@ -58,7 +63,7 @@ public class MedicacionMascotasActivity extends ListaActivity<Mascota> {
 
         public MascotaViewHolder(View view) {
             super(view);
-            texto = view.findViewById(R.id.nombre_medicacion);
+            texto = view.findViewById(R.id.texto_item);
             icono = view.findViewById(R.id.icono);
         }
 

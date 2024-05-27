@@ -28,7 +28,7 @@ public class EventosRepositorio extends RepositorioSQLite<Evento> {
         long inicia = cursor.getLong(cursor.getColumnIndexOrThrow(ContratoEventos.Columnas.INICIO));
         long finaliza = cursor.getLong(cursor.getColumnIndexOrThrow(ContratoEventos.Columnas.FINALIZACION));
 
-        Evento evento = Evento.nuevaEvento()
+        Evento evento = Evento.nuevoEvento()
                 .nombre(notNull(cursor.getString(cursor.getColumnIndexOrThrow(ContratoEventos.Columnas.NOMBRE))))
                 .inicia(FormatoFechaTiempo.convertirTiempo(inicia))
                 .finaliza(FormatoFechaTiempo.convertirTiempo(finaliza))
@@ -40,23 +40,11 @@ public class EventosRepositorio extends RepositorioSQLite<Evento> {
     }
 
     @Override
-    protected void despuesDeCrear(Evento evento) {
-        Mascota mascota = evento.getMascota();
-        Medicamento medicamento = evento.getMedicacion();
-
-        if (mascota != null)
-            asociarMuchos(evento, mascota);
-
-        if (medicamento != null)
-            asociarMuchos(evento, medicamento);
-    }
-
-    @Override
     protected ContentValues extraerValores(Evento evento) {
         LocalDateTime inicia = evento.getInicia();
         LocalDateTime finaliza = evento.getFinaliza();
 
-        Medicamento medicamento = evento.getMedicacion();
+        Medicamento medicamento = evento.getMedicamento();
         Veterinario veterinario = evento.getVeterinario();
 
         ContentValues valores = new ContentValues();
@@ -65,9 +53,7 @@ public class EventosRepositorio extends RepositorioSQLite<Evento> {
         valores.put(ContratoEventos.Columnas.INICIO, FormatoFechaTiempo.segundosEpoch(inicia));
         valores.put(ContratoEventos.Columnas.FINALIZACION, FormatoFechaTiempo.segundosEpoch(finaliza));
         valores.put(ContratoEventos.Columnas.PERIOCIDAD, evento.getPeriocidad());
-        valores.put(ContratoEventos.Columnas.VETERINARIO_ID, evento.getVeterinario().getId());
-        valores.put(ContratoEventos.Columnas.MEDICAMENTO_ID, evento.getMedicacion().getId());
-        
+
         if (medicamento == null) {
             valores.putNull(ContratoEventos.Columnas.MEDICAMENTO_ID);
         }
@@ -83,8 +69,8 @@ public class EventosRepositorio extends RepositorioSQLite<Evento> {
 
     @Override
     protected void despuesDeSeleccionar(List<Evento> eventos) {
-        anadirMascotas(eventos);
-        anadirMedicacion(eventos);
+//        anadirMascotas(eventos);
+//        anadirMedicacion(eventos);
     }
 
     private void anadirMascotas(List<Evento> eventos) {

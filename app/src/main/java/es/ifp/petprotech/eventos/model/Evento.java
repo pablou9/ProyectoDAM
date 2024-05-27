@@ -20,7 +20,7 @@ public class Evento extends Entidad {
     private final LocalDateTime finaliza;
     private final long periocidad;
 
-    public Evento(Builder builder) {
+    private Evento(Builder builder) {
         validarEvento(builder);
 
         this.nombre = builder.nombre;
@@ -29,6 +29,7 @@ public class Evento extends Entidad {
         this.inicia = builder.inicia;
         this.finaliza = builder.finaliza;
         this.periocidad = builder.periocidad;
+        this.medicamento = builder.medicamento;
     }
 
     private void validarEvento(Builder builder) {
@@ -51,7 +52,7 @@ public class Evento extends Entidad {
         return veterinario;
     }
 
-    public Medicamento getMedicacion() {
+    public Medicamento getMedicamento() {
         return medicamento;
     }
 
@@ -92,7 +93,7 @@ public class Evento extends Entidad {
         return Objects.hash(nombre, mascota, veterinario, medicamento, inicia, finaliza, periocidad);
     }
 
-    public static Builder nuevaEvento() {
+    public static Builder nuevoEvento() {
         return new Builder();
     }
 
@@ -100,6 +101,7 @@ public class Evento extends Entidad {
         private String nombre;
         private Mascota mascota;
         private Veterinario veterinario;
+        private Medicamento medicamento;
         private LocalDateTime inicia;
         private LocalDateTime finaliza;
         private long periocidad;
@@ -114,6 +116,10 @@ public class Evento extends Entidad {
         }
         public Builder veterinario(Veterinario veterinario) {
             this.veterinario = veterinario;
+            return this;
+        }
+        public Builder medicamento(Medicamento medicamento) {
+            this.medicamento = medicamento;
             return this;
         }
         public Builder inicia(LocalDateTime inicia) {

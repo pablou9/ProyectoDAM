@@ -8,6 +8,8 @@ import static es.ifp.petprotech.medicacion.viewmodels.AnadirMedicacionViewModel.
 import static es.ifp.petprotech.medicacion.viewmodels.AnadirMedicacionViewModel.CamposMedicacion.NOMBRE;
 import static es.ifp.petprotech.medicacion.viewmodels.AnadirMedicacionViewModel.CamposMedicacion.TIPO;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -81,12 +83,19 @@ public class AnadirMedicacionViewModel extends ViewModel implements ValidadorInp
         return true;
     }
 
+    private static final String TAG = "AnadirMedicacionViewMod";
+
     private Medicamento getMedicamento(String nombre, String tipo) {
+        Log.d(TAG, "getMedicamento: nombre: " + nombre);
+
         List<Medicamento> medicamentos = repositorioMedicamentos.seleccionarPorNombre(nombre);
+
+        Log.d(TAG, "getMedicamento: medicamentos: " + medicamentos);
 
         Medicamento medicamento;
 
         if (medicamentos == null || medicamentos.isEmpty()) {
+            Log.d(TAG, "getMedicamento: epmty, crear");
             medicamento = new Medicamento(nombre, tipo);
             repositorioMedicamentos.crear(medicamento);
         }

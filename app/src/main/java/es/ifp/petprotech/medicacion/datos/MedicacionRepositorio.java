@@ -4,11 +4,15 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import es.ifp.petprotech.bd.BaseDeDatos;
+import es.ifp.petprotech.bd.Repositorio;
 import es.ifp.petprotech.bd.RepositorioSQLite;
+import es.ifp.petprotech.eventos.model.Evento;
 import es.ifp.petprotech.mascotas.model.Mascota;
 import es.ifp.petprotech.medicacion.model.Medicacion;
 import es.ifp.petprotech.medicacion.model.Medicamento;
@@ -20,27 +24,27 @@ public class MedicacionRepositorio extends RepositorioSQLite<Medicacion> {
     }
 
     @Override
-    protected Medicacion extraerEntidad(Cursor cursor) {
-        String cantidad = cursor.getString(cursor.getColumnIndexOrThrow(ContratoMedicacion.Columnas.CANTIDAD));
-        int dias = cursor.getInt(cursor.getColumnIndexOrThrow(ContratoMedicacion.Columnas.DIAS));
-        int horas = cursor.getInt(cursor.getColumnIndexOrThrow(ContratoMedicacion.Columnas.HORAS));
+        protected Medicacion extraerEntidad(Cursor cursor) {
+            String cantidad = cursor.getString(cursor.getColumnIndexOrThrow(ContratoMedicacion.Columnas.CANTIDAD));
+            int dias = cursor.getInt(cursor.getColumnIndexOrThrow(ContratoMedicacion.Columnas.DIAS));
+            int horas = cursor.getInt(cursor.getColumnIndexOrThrow(ContratoMedicacion.Columnas.HORAS));
 
-        Medicacion medicacion = Medicacion.nuevaMedicacion()
-                                            .cantidad(cantidad)
-                                            .dias(dias)
-                                            .horas(horas)
-                                            .build();
+            Medicacion medicacion = Medicacion.nuevaMedicacion()
+                    .cantidad(cantidad)
+                    .dias(dias)
+                    .horas(horas)
+                    .build();
 
-        medicacion.setId(cursor.getLong(cursor.getColumnIndexOrThrow(ContratoMedicacion.Columnas._ID)));
+            medicacion.setId(cursor.getLong(cursor.getColumnIndexOrThrow(ContratoMedicacion.Columnas._ID)));
 
-        return medicacion;
-    }
+            return medicacion;
+        }
 
-    @Override
-    protected ContentValues extraerValores(Medicacion medicacion) {
-        ContentValues valores = new ContentValues();
+        @Override
+        protected ContentValues extraerValores(Medicacion medicacion) {
+            ContentValues valores = new ContentValues();
 
-        valores.put(ContratoMedicacion.Columnas.MASCOTA_ID, medicacion.getMascota().getId());
+            valores.put(ContratoMedicacion.Columnas.MASCOTA_ID, medicacion.getMascota().getId());
         valores.put(ContratoMedicacion.Columnas.MEDICAMENTO_ID, medicacion.getMedicamento().getId());
         valores.put(ContratoMedicacion.Columnas.CANTIDAD, medicacion.getCantidad());
         valores.put(ContratoMedicacion.Columnas.DIAS, medicacion.getDias());
@@ -48,6 +52,8 @@ public class MedicacionRepositorio extends RepositorioSQLite<Medicacion> {
 
         return valores;
     }
+
+    private static final String TAG = "MedicacionRepositorio";
 
     @Override
     protected void despuesDeSeleccionar(List<Medicacion> listaMedicacion) {
@@ -68,5 +74,26 @@ public class MedicacionRepositorio extends RepositorioSQLite<Medicacion> {
                 medicacion.setMedicamento(medicamentoMedicacion.get(0));
             }
         }
+    }
+
+    @Override
+    protected void despuesDeCrear(Medicacion medicacion) {
+        Repositorio<Evento> eventosRepositorio = getRepositorio(Evento.class);
+
+        Mascota mascota = Objects.requireNonNull(medicacion.getMascota());
+        Medicamento medicamento = Objects.requireNonNull(medicacion.getMedicamento());
+
+        LocalDateTime inicia = LocalDateTime.now();
+
+        Evento eventoMedicacion = Evento.nuevoEvento()
+                .nombre(mascota.getNombre() + " - Medicamento: " + medicacion.getMedicamento().getNombre())
+                .inicia(inicia)
+                .finaliza(inicia.plusDays(medicacion.getDias()))
+                .periocidad(medicacion.getHoras())
+                .mascota(mascota)
+                .medicamento(medicamento)
+                .build();
+
+        eventosRepositorio.crear(eventoMedicacion);
     }
 }

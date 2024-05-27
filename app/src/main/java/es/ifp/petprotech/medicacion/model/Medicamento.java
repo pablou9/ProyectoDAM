@@ -40,4 +40,12 @@ public class Medicamento extends Entidad {
     public int hashCode() {
         return Objects.hash(nombre);
     }
+
+    @Override
+    public String toString() {
+        return "Medicamento{" +
+                "nombre='" + nombre + '\'' +
+                ", uso='" + uso + '\'' +
+                '}';
+    }
 }

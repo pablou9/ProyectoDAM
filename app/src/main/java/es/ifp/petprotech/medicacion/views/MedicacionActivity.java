@@ -2,8 +2,10 @@ package es.ifp.petprotech.medicacion.views;
 
 import static es.ifp.petprotech.app.model.FabricaViewModel.MEDICACION;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,15 +20,21 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.List;
 
 import es.ifp.petprotech.R;
+import es.ifp.petprotech.app.model.FabricaViewModel;
 import es.ifp.petprotech.app.viewmodels.NavegacionAnadirEntidadesViewModel;
 import es.ifp.petprotech.app.views.AdaptadorLista;
 import es.ifp.petprotech.app.views.ListaActivity;
 import es.ifp.petprotech.app.views.ViewHolderLista;
+import es.ifp.petprotech.mascotas.model.Mascota;
+import es.ifp.petprotech.mascotas.viewmodels.MascotasViewModel;
 import es.ifp.petprotech.mascotas.views.MascotaActivity;
 import es.ifp.petprotech.medicacion.model.Medicacion;
 import es.ifp.petprotech.medicacion.viewmodels.MedicacionViewModel;
 
 public class MedicacionActivity extends ListaActivity<Medicacion> {
+
+    private Mascota mascota;
+    private MedicacionViewModel viewModel;
 
     @Override
     protected AdaptadorLista<Medicacion> nuevoAdaptador() {
@@ -45,9 +53,35 @@ public class MedicacionActivity extends ListaActivity<Medicacion> {
 
     @Override
     protected LiveData<List<Medicacion>> getLista() {
-        MedicacionViewModel viewModel = new ViewModelProvider(this, MEDICACION.getFabrica()).get(MedicacionViewModel.class);
-        return viewModel.getListadoMedicacion();
+        return viewModel.getListadoMedicacion(mascota);
     }
+
+    @Override
+    protected void lanzarActividadCrearEntidad() {
+        new MedicacionDialogo(mascota, creada -> viewModel.actualizarLista(mascota))
+            .show(getSupportFragmentManager(), "MEDICACION_DIALOGO");
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        viewModel = new ViewModelProvider(this, MEDICACION.getFabrica()).get(MedicacionViewModel.class);
+
+        Intent intent = getIntent();
+        long id = intent.getLongExtra("data", -1);
+
+        if (id == -1)
+            throw new IllegalStateException("Debes proporcionar una id de entidad en esta actividad");
+
+        MascotasViewModel mascotasViewModel =
+                new ViewModelProvider(this, FabricaViewModel.MASCOTA.getFabrica())
+                        .get(MascotasViewModel.class);
+
+        mascota = mascotasViewModel.queryMascota(id);
+    }
+
+    private static final String TAG = "MedicacionActivity";
 
     /** El contenedor de cada item de medicacion en la lista */
     public static class MedicacionViewHolder extends ViewHolderLista {
@@ -58,7 +92,7 @@ public class MedicacionActivity extends ListaActivity<Medicacion> {
 
         public MedicacionViewHolder(View view) {
             super(view);
-            nombre = view.findViewById(R.id.nombre_medicacion);
+            nombre = view.findViewById(R.id.texto_item);
             cantidad = view.findViewById(R.id.cantidad);
             tomas = view.findViewById(R.id.tomas);
             icono = view.findViewById(R.id.icono);

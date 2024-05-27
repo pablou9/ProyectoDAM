@@ -220,7 +220,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
 
         if (indiceAsociacionesAMuchos == null)
             throw new IllegalStateException("El índice de asociaciones debe de estar " +
-                    "inicializado antes de cualquier asociación");
+                    "inicializado antes de cualquier asociación ("+getClass().getSimpleName()+")");
 
         AsociaciacionMuchosAMuchos asociacion = indiceAsociacionesAMuchos.get(asociar.getClass());
 
@@ -293,7 +293,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
     public List<T> seleccionarPorNombre(String nombre) {
         try (Cursor cursor = baseDeDatos.rawQuery(
                 "SELECT * FROM " + TABLA +
-                " WHERE '" + nombre + "' = ?", new String[]{nombre}))
+                " WHERE nombre = ?", new String[]{nombre}))
         {
             List<T> entidades = new ArrayList<>();
             while (cursor.moveToNext()) {
@@ -390,7 +390,7 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
         {
             while (cursor.moveToNext()) {
 
-                long id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID));
+                long id = cursor.getLong(cursor.getColumnIndexOrThrow("id_where"));
 
                 List<E> listaEntidades = entidades.computeIfAbsent(id, k-> new ArrayList<>());
                 RepositorioSQLite<E> repo = (RepositorioSQLite<E>) getRepositorio(claseAsociacion);
