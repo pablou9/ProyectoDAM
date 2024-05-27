@@ -20,6 +20,8 @@
     <string name="mas_tarde">Más Tarde →</string>
     <string name="nueva_mascota">Nueva Mascota</string>
     <string name="error_campo_obligatorio">Campo obligatorio</string>
+    <string name="error_solo_numeros">Debe ser un número</string>
+    <string name="error_mayor_a_uno">Debe ser un mayour a uno</string>
     <string name="error_nacimiento_futuro">La fecha de nacimiento no puede ser en el futuro</string>
     <string name="error_chip_invalido">El número de chip debe contener 15 dígitos</string>
     <string name="anadir_imagen">AÑADIR IMAGEN</string>
@@ -54,7 +56,19 @@
     <string name="domingo">Domingo</string>
     <string name="dias">Días</string>
     <string name="eliminar">Eliminar</string>
-    <string name="eliminar_mascota">"¿Seguro que deseas eliminar esta mascota?"</string>
-    <string name="eliminar_veterinario">"¿Seguro que deseas eliminar este veterinario?"</string>
+    <string name="eliminar_mascota">¿Seguro que deseas eliminar esta mascota?</string>
+    <string name="eliminar_veterinario">¿Seguro que deseas eliminar este veterinario?</string>
+    <string name="eliminar_medicacion">¿Seguro que deseas eliminar esta medicación?</string>
+    <string name="anadir_mediacion">Añadir Medicación</string>
+    <string name="anadir_cita">Añadir Cita</string>
+    <string name="anadir">Añadir</string>
+    <string name="cancel">Cancelar</string>
+    <string name="nombre_medicamento">Nombre Medicamento</string>
+    <string name="tipo_medicamento">Tipo</string>
+    <string name="cantidad">Cantidad</string>
+    <string name="horas">Horas</string>
+    <string name="duracion_dias">Duración días</string>
+    <string name="cada">Cada</string>
+    <string name="durante">durante</string>
 
 </resources>

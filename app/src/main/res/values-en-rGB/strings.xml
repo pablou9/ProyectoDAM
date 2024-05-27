@@ -23,6 +23,8 @@
     <string name="error_campo_obligatorio">Mandatory Field</string>
     <string name="error_nacimiento_futuro">Date of Birth can\'t be in the future</string>
     <string name="error_chip_invalido">Chip number must be at least 15 characters long</string>
+    <string name="error_solo_numeros">Must be a number</string>
+    <string name="error_mayor_a_uno">Must be greater than one</string>
     <string name="anadir_imagen">ADD IMAGE</string>
     <string name="especializacion">Specialty</string>
     <string name="direccion">Address</string>
@@ -55,6 +57,16 @@
     <string name="domingo">Sunday</string>
     <string name="dias">Opening Days</string>
     <string name="eliminar">Delete</string>
-    <string name="eliminar_mascota">"¿Are you sure you want to delete this pet?"</string>
-    <string name="eliminar_veterinario">"¿Are you sure you want to delete this vet?"</string>
+    <string name="eliminar_mascota">Are you sure you want to delete this pet?</string>
+    <string name="eliminar_veterinario">Are you sure you want to delete this vet?</string>
+    <string name="eliminar_medicacion">Are you sure you want to delete this medication?</string>
+    <string name="anadir_mediacion">Add Medication</string>
+    <string name="anadir_cita">Add Appointment</string>
+    <string name="anadir">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="nombre_medicamento">Medication name</string>
+    <string name="tipo_medicamento">Type</string>
+    <string name="cantidad">Quantity</string>
+    <string name="horas">Hours</string>
+    <string name="duracion_dias">Duration in days</string>
 </resources>

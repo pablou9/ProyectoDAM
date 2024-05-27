@@ -69,8 +69,13 @@ public abstract class ListaActivity<T extends Entidad> extends BaseActivity {
 
     private void lanzarActividadCrearEntidad() {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(
-            NavegacionAnadirEntidadesViewModel.PANTALLAS, pantallasNuevaEntidad().get(0));
+        List<NavegacionAnadirEntidadesViewModel.Pantalla> pantallas = pantallasNuevaEntidad();
+
+        for (int i = 0; i < pantallas.size(); i++) {
+            NavegacionAnadirEntidadesViewModel.Pantalla pantalla = pantallas.get(i);
+            bundle.putSerializable(
+                    NavegacionAnadirEntidadesViewModel.PANTALLAS+"_"+i, pantalla);
+        }
 
         lanzarActividad(AnadirEntidadesActivity.class, bundle);
     }

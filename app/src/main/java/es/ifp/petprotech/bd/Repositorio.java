@@ -9,7 +9,7 @@ public interface Repositorio<T extends Entidad> {
     boolean asociarMuchos(T entidad, Entidad asociar);
     List<T> seleccionarTodo();
     T seleccionarPorId(long id);
-    List<T> seleccionarPor(String atributo, String valor);
+    List<T> seleccionarPorNombre(String nombre);
     List<T> seleccionarEn(long[] ids);
     <E extends Entidad> Map<Long, List<E>> seleccionarMuchosAUno(Class<E> claseAsociacion, long[] where);
     <E extends Entidad> Map<Long, List<E>> seleccionarUnoAMuchos(Class<E> claseAsociacion, long[] idsPropias);

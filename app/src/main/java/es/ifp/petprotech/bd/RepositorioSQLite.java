@@ -290,10 +290,10 @@ public abstract class RepositorioSQLite<T extends Entidad> implements Repositori
     }
 
     @Override
-    public List<T> seleccionarPor(String atributo, String valor) {
+    public List<T> seleccionarPorNombre(String nombre) {
         try (Cursor cursor = baseDeDatos.rawQuery(
                 "SELECT * FROM " + TABLA +
-                " WHERE " + atributo + " = ?", new String[]{valor}))
+                " WHERE '" + nombre + "' = ?", new String[]{nombre}))
         {
             List<T> entidades = new ArrayList<>();
             while (cursor.moveToNext()) {

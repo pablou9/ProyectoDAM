@@ -328,7 +328,7 @@ public class RepositorioSQLiteTest {
         repositorio.crear(entidad3);
 
         List<EntidadDePrueba> resultado =
-            repositorio.seleccionarPor(ColumnasPrueba.EDAD, String.valueOf(edad));
+            repositorio.seleccionarPorNombre(String.valueOf(edad));
 
         Assert.assertEquals(3, resultado.size());
         Assert.assertEquals(entidad1, resultado.get(0));

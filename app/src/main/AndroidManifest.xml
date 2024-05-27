@@ -14,6 +14,12 @@
         android:theme="@style/Theme.PetProtech"
         tools:targetApi="31">
         <activity
+            android:name=".medicacion.views.MedicacionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".medicacion.views.MedicacionMascotasActivity"
+            android:exported="false" />
+        <activity
             android:name=".app.views.EntidadActivity"
             android:exported="false" />
         <activity

@@ -12,7 +12,7 @@ import androidx.fragment.app.DialogFragment;
 
 import java.time.LocalDate;
 
-import es.ifp.petprotech.app.datos.FormatoFechaTiempo;
+import es.ifp.petprotech.app.util.FormatoFechaTiempo;
 
 public class DialogoCalendario extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 

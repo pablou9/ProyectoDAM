@@ -107,7 +107,9 @@ public class Formulario {
                     camposConInput.add(campo.getNombre());
 
                 usuarioHaInteractuado = alMenosUnCampoTieneInput();
-                onUsuarioInteraccionListener.accept(usuarioHaInteractuado);
+
+                if (onUsuarioInteraccionListener != null)
+                    onUsuarioInteraccionListener.accept(usuarioHaInteractuado);
             }
         });
     }

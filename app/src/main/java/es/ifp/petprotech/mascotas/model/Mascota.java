@@ -27,10 +27,6 @@ public class Mascota extends Entidad {
 
     private Uri foto;
 
-    public static Builder nuevaMascota() {
-        return new Builder();
-    }
-
     private Mascota(Builder builder) {
         validarMascota(builder);
 
@@ -121,6 +117,10 @@ public class Mascota extends Entidad {
     @Override
     public int hashCode() {
         return Objects.hash(nombre, especie);
+    }
+
+    public static Builder nuevaMascota() {
+        return new Builder();
     }
 
     public static class Builder {

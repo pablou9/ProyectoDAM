@@ -43,6 +43,16 @@ public class MascotasViewModel extends ViewModel {
 
     private static final String TAG = "MascotasViewModel";
 
+    public Mascota getMascota() {
+        Mascota mascota = this.mascota.getValue();
+
+        if (mascota == null)
+            throw new IllegalStateException("No has seleccionado una mascota todavía. Selecciona " +
+                    "con getMascota(long)");
+
+        return mascota;
+    }
+
     public MutableLiveData<Mascota> getMascota(long id) {
         if (mascota == null) {
             mascota = new MutableLiveData<>();

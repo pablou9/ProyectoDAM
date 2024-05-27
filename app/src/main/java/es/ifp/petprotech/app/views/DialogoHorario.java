@@ -11,7 +11,7 @@ import androidx.fragment.app.DialogFragment;
 
 import java.time.LocalTime;
 
-import es.ifp.petprotech.app.datos.FormatoFechaTiempo;
+import es.ifp.petprotech.app.util.FormatoFechaTiempo;
 
 public class DialogoHorario extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 

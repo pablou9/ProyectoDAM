@@ -1,5 +1,7 @@
 package es.ifp.petprotech.app.viewmodels;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -49,6 +51,8 @@ public class NavegacionAnadirEntidadesViewModel extends ViewModel {
     private final MutableLiveData<Boolean> usuarioHaInteractuado = new MutableLiveData<>(false);
 
     public void anadirPantallas(List<Pantalla> pantallas) {
+        Log.d(TAG, "anadirPantallas: PANTALLAS: " + pantallas);
+
         this.pantallas = pantallas;
         pantallaActual.setValue(pantallas.get(0));
     }
@@ -69,6 +73,7 @@ public class NavegacionAnadirEntidadesViewModel extends ViewModel {
     }
 
     public boolean esUltimaPantalla(Pantalla pantalla) {
+        Log.d(TAG, "esUltimaPantalla: PANTALLA: " + pantalla + ". PANTALLAS: " + pantallas);
         return pantallas.get(pantallas.size() -1) == pantalla;
     }
 

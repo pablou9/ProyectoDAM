@@ -13,19 +13,31 @@ import es.ifp.petprotech.bd.RepositorioSQLite;
 import es.ifp.petprotech.centros.datos.CentrosProfesionalesRepositorio;
 import es.ifp.petprotech.centros.datos.ContratoCentrosProfesionales;
 import es.ifp.petprotech.centros.model.CentroProfesional;
+import es.ifp.petprotech.eventos.datos.ContratoEventos;
+import es.ifp.petprotech.eventos.datos.EventosRepositorio;
+import es.ifp.petprotech.eventos.model.Evento;
 import es.ifp.petprotech.mascotas.datos.ContratoMascotas;
 import es.ifp.petprotech.mascotas.datos.ContratoMascotasVeterinarios;
 import es.ifp.petprotech.mascotas.datos.MascotasRepositorio;
 import es.ifp.petprotech.mascotas.model.Mascota;
+import es.ifp.petprotech.medicacion.datos.ContratoMedicacion;
+import es.ifp.petprotech.medicacion.datos.ContratoMedicamentos;
+import es.ifp.petprotech.medicacion.datos.MedicacionRepositorio;
+import es.ifp.petprotech.medicacion.datos.MedicamentosRepositorio;
+import es.ifp.petprotech.medicacion.model.Medicacion;
+import es.ifp.petprotech.medicacion.model.Medicamento;
 import es.ifp.petprotech.veterinarios.datos.ContratoVeterinarios;
 import es.ifp.petprotech.veterinarios.datos.VeterinariosRepositorio;
 import es.ifp.petprotech.veterinarios.model.Veterinario;
 
 public enum Modelo {
 
-    MASCOTA(Mascota.class, Modelo::repositorioMascotas),
+    MASCOTA(Mascota.class, Modelo::repositorioMascotas, Modelo::asociacionesMascotas),
     VETERINARIO(Veterinario.class, Modelo::repositorioVeterinarios, Modelo::asociacionesVeterinarios),
-    CENTRO_PROFESIONAL(CentroProfesional.class, Modelo::repositorioCentroProfesional, Modelo::asociacionesCentrosProfesionales);
+    CENTRO_PROFESIONAL(CentroProfesional.class, Modelo::repositorioCentroProfesional, Modelo::asociacionesCentrosProfesionales),
+    EVENTO(Evento.class, Modelo::repositorioEventos, Modelo::asociacionesEventos),
+    MEDICAMENTO(Medicamento.class, MedicamentosRepositorio::new),
+    MEDICACION(Medicacion.class, Modelo::repositorioMedicacion, Modelo::asociacionesMedicacion);
 
     private final Function<BaseDeDatos<SQLiteDatabase>, Repositorio<? extends Entidad>> constructorRepositorio;
     private final Consumer<Repositorio<? extends Entidad>> asociadorRepositorios;
@@ -79,7 +91,20 @@ public enum Modelo {
                         ContratoMascotasVeterinarios.Columnas.ID_VETERINARIO
                 )));
 
+        repositorio.anadirAsociaciones(Map.of(
+                Medicacion.class, new RepositorioSQLite.AsociaciacionUnoAMuchos(
+                    ContratoMedicacion.NOMBRE_TABLA,
+                    ContratoMedicacion.Columnas.MASCOTA_ID
+                )
+        ));
+
         return repositorio;
+    }
+
+    private static void asociacionesMascotas(Repositorio<? extends Entidad> repositorio) {
+        repositorio.setRepositoriosAsociados(Map.of(
+                Medicacion.class, MEDICACION.repositorio
+        ));
     }
 
     private static Repositorio<Veterinario> repositorioVeterinarios(BaseDeDatos<SQLiteDatabase> bd) {
@@ -108,8 +133,6 @@ public enum Modelo {
             Mascota.class, MASCOTA.repositorio,
             CentroProfesional.class, CENTRO_PROFESIONAL.repositorio
         ));
-
-
     }
 
     private static Repositorio<CentroProfesional> repositorioCentroProfesional(BaseDeDatos<SQLiteDatabase> bd) {
@@ -138,5 +161,49 @@ public enum Modelo {
         repositorio.setRepositoriosAsociados(Map.of(
                 Veterinario.class, VETERINARIO.repositorio,
                 Mascota.class, MASCOTA.repositorio));
+    }
+
+    private static Repositorio<Evento> repositorioEventos(BaseDeDatos<SQLiteDatabase> bd) {
+        EventosRepositorio repositorio = new EventosRepositorio(bd);
+
+        repositorio.anadirAsociaciones(Map.of(
+                Mascota.class, new RepositorioSQLite.AsociaciacionUnoAMuchos(
+                        ContratoMascotas.NOMBRE_TABLA,
+                        ContratoEventos.Columnas.MASCOTA_ID),
+                Medicamento.class, new RepositorioSQLite.AsociaciacionUnoAMuchos(
+                        ContratoMedicamentos.NOMBRE_TABLA,
+                        ContratoEventos.Columnas.MEDICAMENTO_ID
+                )));
+
+
+
+        return repositorio;
+    }
+
+    private static void asociacionesEventos(Repositorio<? extends Entidad> repositorio) {
+        repositorio.setRepositoriosAsociados(Map.of(
+                Mascota.class, MASCOTA.repositorio,
+                Medicamento.class, MEDICAMENTO.repositorio));
+    }
+
+    private static Repositorio<Medicacion> repositorioMedicacion(BaseDeDatos<SQLiteDatabase> bd) {
+        MedicacionRepositorio repositorio = new MedicacionRepositorio(bd);
+
+        repositorio.anadirAsociaciones(Map.of(
+                Mascota.class, new RepositorioSQLite.AsociaciacionUnoAMuchos(
+                        ContratoMascotas.NOMBRE_TABLA,
+                        ContratoMedicacion.Columnas.MASCOTA_ID),
+                Medicamento.class, new RepositorioSQLite.AsociaciacionUnoAMuchos(
+                        ContratoMedicamentos.NOMBRE_TABLA,
+                        ContratoMedicacion.Columnas.MEDICAMENTO_ID
+                )));
+
+        return repositorio;
+    }
+
+    private static void asociacionesMedicacion(Repositorio<? extends Entidad> repositorio) {
+        repositorio.setRepositoriosAsociados(Map.of(
+                Mascota.class, MASCOTA.repositorio,
+                Medicamento.class, MEDICAMENTO.repositorio));
     }
 }

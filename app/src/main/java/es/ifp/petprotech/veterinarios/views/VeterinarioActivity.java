@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.lifecycle.ViewModelProvider;
 
 import es.ifp.petprotech.R;
-import es.ifp.petprotech.app.datos.FormatoFechaTiempo;
+import es.ifp.petprotech.app.util.FormatoFechaTiempo;
 import es.ifp.petprotech.app.views.EntidadActivity;
 import es.ifp.petprotech.centros.model.CentroProfesional;
 import es.ifp.petprotech.veterinarios.viewmodels.VeterinariosViewModel;

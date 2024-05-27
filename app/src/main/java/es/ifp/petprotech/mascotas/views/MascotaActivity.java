@@ -15,6 +15,7 @@ import es.ifp.petprotech.app.views.EntidadActivity;
 import es.ifp.petprotech.centros.model.CentroProfesional;
 import es.ifp.petprotech.mascotas.model.Mascota;
 import es.ifp.petprotech.mascotas.viewmodels.MascotasViewModel;
+import es.ifp.petprotech.medicacion.views.MedicacionDialogo;
 import es.ifp.petprotech.veterinarios.model.Veterinario;
 
 public class MascotaActivity extends EntidadActivity {
@@ -57,8 +58,22 @@ public class MascotaActivity extends EntidadActivity {
         veterinario = findViewById(R.id.veterinario);
         centroVeterinario = findViewById(R.id.centro_veterinario);
 
+        TextView anadirMedicamento = findViewById(R.id.anadir_medicamento);
+        TextView anadirCita = findViewById(R.id.anadir_cita);
+
+        anadirMedicamento.setOnClickListener(e -> mostrarDialogoMedicamento());
+        anadirCita.setOnClickListener(e -> mostrarDialogoCita());
+
         viewModel = new ViewModelProvider(this, MASCOTA.getFabrica()).get(MascotasViewModel.class);
         viewModel.getMascota(idMascota).observe(this, this::popularVista);
+    }
+
+    private void mostrarDialogoMedicamento() {
+        new MedicacionDialogo().show(getSupportFragmentManager(), "MEDICACION_DIALOGO");
+    }
+
+    private void mostrarDialogoCita() {
+
     }
 
     private void popularVista(Mascota mascota) {

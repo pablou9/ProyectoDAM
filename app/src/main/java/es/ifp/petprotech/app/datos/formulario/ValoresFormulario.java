@@ -24,6 +24,14 @@ public class ValoresFormulario {
         return input.get(campo);
     }
 
+    public String valor(String campo, String defecto) {
+        String valor =  input.get(campo);
+
+        return valor != null && !valor.isBlank()
+            ? valor
+            : defecto;
+    }
+
     Map<String, String> getInput() {
         return input;
     }

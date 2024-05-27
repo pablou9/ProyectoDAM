@@ -5,6 +5,7 @@ import android.widget.ImageView;
 
 import es.ifp.petprotech.R;
 import es.ifp.petprotech.mascotas.views.MascotasActivity;
+import es.ifp.petprotech.medicacion.views.MedicacionMascotasActivity;
 import es.ifp.petprotech.veterinarios.views.VeterinariosActivity;
 
 public class HomeActivity extends BaseActivity {
@@ -25,8 +26,10 @@ public class HomeActivity extends BaseActivity {
 
         ImageView botonMascotas = findViewById(R.id.boton_mascotas);
         ImageView botonVeterinario = findViewById(R.id.boton_veterinarios);
+        ImageView botonMedicacion = findViewById(R.id.boton_medicacion);
 
         botonMascotas.setOnClickListener(e -> lanzarActividad(MascotasActivity.class));
         botonVeterinario.setOnClickListener(e -> lanzarActividad(VeterinariosActivity.class));
+        botonMedicacion.setOnClickListener(e -> lanzarActividad(MedicacionMascotasActivity.class));
     }
 }

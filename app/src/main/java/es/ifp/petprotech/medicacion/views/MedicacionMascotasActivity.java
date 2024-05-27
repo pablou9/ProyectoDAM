@@ -1,9 +1,10 @@
-package es.ifp.petprotech.veterinarios.views;
+package es.ifp.petprotech.medicacion.views;
 
-import static es.ifp.petprotech.app.model.FabricaViewModel.VETERINARIO;
+import static es.ifp.petprotech.app.model.FabricaViewModel.MASCOTA;
 
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,40 +23,40 @@ import es.ifp.petprotech.app.viewmodels.NavegacionAnadirEntidadesViewModel;
 import es.ifp.petprotech.app.views.AdaptadorLista;
 import es.ifp.petprotech.app.views.ListaActivity;
 import es.ifp.petprotech.app.views.ViewHolderLista;
-import es.ifp.petprotech.veterinarios.model.Veterinario;
-import es.ifp.petprotech.veterinarios.viewmodels.VeterinariosViewModel;
+import es.ifp.petprotech.mascotas.model.Mascota;
+import es.ifp.petprotech.mascotas.viewmodels.MascotasViewModel;
 
-public class VeterinariosActivity extends ListaActivity<Veterinario> {
+public class MedicacionMascotasActivity extends ListaActivity<Mascota> {
 
     @Override
-    protected AdaptadorLista<Veterinario> nuevoAdaptador() {
-        return new VeterinariosActivity.VeterinariosAdapter();
+    protected AdaptadorLista<Mascota> nuevoAdaptador() {
+        return new MedicacionAdapter();
     }
 
     @Override
     protected Class<?> entidadActivity() {
-        return VeterinarioActivity.class;
+        return MedicacionActivity.class;
     }
 
     @Override
     protected List<NavegacionAnadirEntidadesViewModel.Pantalla> pantallasNuevaEntidad() {
-        return List.of(NavegacionAnadirEntidadesViewModel.Pantalla.ANADIR_VETERINARIO);
+        return List.of(NavegacionAnadirEntidadesViewModel.Pantalla.ANADIR_MASCOTA, NavegacionAnadirEntidadesViewModel.Pantalla.ANADIR_FOTO_MASCOTA, NavegacionAnadirEntidadesViewModel.Pantalla.ANADIR_VETERINARIO);
     }
 
     @Override
-    protected LiveData<List<Veterinario>> getLista() {
-        VeterinariosViewModel viewModel =
-                new ViewModelProvider(this, VETERINARIO.getFabrica()).get(VeterinariosViewModel.class);
+    protected LiveData<List<Mascota>> getLista() {
+        MascotasViewModel viewModel =
+                new ViewModelProvider(this, MASCOTA.getFabrica()).get(MascotasViewModel.class);
 
-        return viewModel.getVeterinarios();
+        return viewModel.getMascotas();
     }
 
     /** El contenedor de cada item de mascota en la lista */
-    public static class VeterinarioViewHolder extends ViewHolderLista {
+    public static class MascotaViewHolder extends ViewHolderLista {
         private TextView texto;
         private ImageView icono;
 
-        public VeterinarioViewHolder(View view) {
+        public MascotaViewHolder(View view) {
             super(view);
             texto = view.findViewById(R.id.nombre_medicacion);
             icono = view.findViewById(R.id.icono);
@@ -76,31 +77,37 @@ public class VeterinariosActivity extends ListaActivity<Veterinario> {
     }
 
     /** El adaptador de la lista */
-    public static class VeterinariosAdapter extends AdaptadorLista<Veterinario> {
+    public static class MedicacionAdapter extends AdaptadorLista<Mascota> {
 
         @NonNull
         @Override
-        public VeterinariosActivity.VeterinarioViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public MascotaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             // Crea un nuevo contenedor item
             View view = LayoutInflater
                     .from(parent.getContext())
                     .inflate(R.layout.item_lista, parent, false);
 
-            return new VeterinariosActivity.VeterinarioViewHolder(view);
+            return new MascotaViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolderLista holder, int position) {
             super.onBindViewHolder(holder, position);
 
-            VeterinariosActivity.VeterinarioViewHolder viewHolder = (VeterinariosActivity.VeterinarioViewHolder) holder;
+            MascotaViewHolder viewHolder = (MascotaViewHolder) holder;
 
-            Veterinario mascota = getEntidad(position);
+            Mascota mascota = getEntidad(position);
 
-            Resources resources = holder.getVista().getResources();
-            Drawable imagen = ResourcesCompat.getDrawable(resources, R.drawable.baseline_local_hospital_60, null);
+            Uri fotoMascota = mascota.getFoto();
 
-            viewHolder.getIcono().setImageDrawable(imagen);
+            if (fotoMascota != null) {
+                viewHolder.getIcono().setImageURI(fotoMascota);
+            }
+            else {
+                Resources resources = holder.getVista().getResources();
+                Drawable imagen = ResourcesCompat.getDrawable(resources, R.drawable.baseline_pets_32, null);
+                viewHolder.getIcono().setImageDrawable(imagen);
+            }
             viewHolder.getTexto().setText(mascota.getNombre());
         }
     }

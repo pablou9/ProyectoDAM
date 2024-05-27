@@ -18,6 +18,10 @@ import es.ifp.petprotech.centros.model.CentroProfesional;
 import es.ifp.petprotech.mascotas.model.Mascota;
 import es.ifp.petprotech.mascotas.viewmodels.AnadirMascotaViewModel;
 import es.ifp.petprotech.mascotas.viewmodels.MascotasViewModel;
+import es.ifp.petprotech.medicacion.model.Medicacion;
+import es.ifp.petprotech.medicacion.model.Medicamento;
+import es.ifp.petprotech.medicacion.viewmodels.AnadirMedicacionViewModel;
+import es.ifp.petprotech.medicacion.viewmodels.MedicacionViewModel;
 import es.ifp.petprotech.veterinarios.model.Veterinario;
 import es.ifp.petprotech.veterinarios.viewmodels.AnadirVeterinarioViewModel;
 import es.ifp.petprotech.veterinarios.viewmodels.VeterinariosViewModel;
@@ -40,8 +44,17 @@ public enum FabricaViewModel {
                     SharedPreferencesRepositorio.instancia(context.getSharedPreferences(NOMBRE_PREFERENCIAS, MODE_PRIVATE)))),
     VETERINARIO(VeterinariosViewModel.class,
             context ->
-            new VeterinariosViewModel(
-            Modelo.getRepositorio(Modelo.VETERINARIO, Veterinario.class)));
+                new VeterinariosViewModel(
+                Modelo.getRepositorio(Modelo.VETERINARIO, Veterinario.class))),
+    ANADIR_MEDICACION(AnadirMedicacionViewModel.class,
+            context ->
+                new AnadirMedicacionViewModel(
+                Modelo.getRepositorio(Modelo.MEDICACION, Medicacion.class),
+                Modelo.getRepositorio(Modelo.MEDICAMENTO, Medicamento.class))),
+    MEDICACION(MedicacionViewModel.class,
+            context ->
+                new MedicacionViewModel(
+                Modelo.getRepositorio(Modelo.MEDICACION, Medicacion.class)));
 
 
     private final Function<Context, ? extends ViewModel> constructorViewModel;

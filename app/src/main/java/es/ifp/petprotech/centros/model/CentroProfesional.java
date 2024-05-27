@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import es.ifp.petprotech.app.datos.FormatoFechaTiempo;
+import es.ifp.petprotech.app.util.FormatoFechaTiempo;
 import es.ifp.petprotech.bd.Entidad;
 import es.ifp.petprotech.veterinarios.model.Veterinario;
 

@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import es.ifp.petprotech.app.datos.FormatoFechaTiempo;
+import es.ifp.petprotech.app.util.FormatoFechaTiempo;
 import es.ifp.petprotech.bd.BaseDeDatos;
 import es.ifp.petprotech.bd.RepositorioSQLite;
 import es.ifp.petprotech.centros.model.RangoHorario;

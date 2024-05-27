@@ -59,7 +59,7 @@ public class MascotasActivity extends ListaActivity<Mascota> {
 
         public MascotaViewHolder(View view) {
             super(view);
-            texto = view.findViewById(R.id.texto);
+            texto = view.findViewById(R.id.nombre_medicacion);
             icono = view.findViewById(R.id.icono);
         }
 
@@ -106,7 +106,7 @@ public class MascotasActivity extends ListaActivity<Mascota> {
             }
             else {
                 Resources resources = holder.getVista().getResources();
-                Drawable imagen = ResourcesCompat.getDrawable(resources, R.drawable.baseline_pets_24, null);
+                Drawable imagen = ResourcesCompat.getDrawable(resources, R.drawable.baseline_pets_32, null);
                 viewHolder.getIcono().setImageDrawable(imagen);
             }
             viewHolder.getTexto().setText(mascota.getNombre());

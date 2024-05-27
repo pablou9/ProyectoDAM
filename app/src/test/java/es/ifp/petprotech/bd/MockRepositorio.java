@@ -52,8 +52,13 @@ public class MockRepositorio<T extends Entidad> implements Repositorio<T> {
     }
 
     @Override
-    public List<T> seleccionarPor(String atributo, String valor) {
+    public List<T> seleccionarPorNombre(String nombre) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <E extends Entidad> Map<Long, List<E>> seleccionarUnoAMuchos(Class<E> claseAsociacion, long[] idsPropias) {
+        return null;
     }
 
     @Override

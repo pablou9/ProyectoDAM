@@ -8,12 +8,15 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
+import java.util.Map;
 
+import es.ifp.petprotech.app.util.FormatoFechaTiempo;
 import es.ifp.petprotech.bd.BaseDeDatos;
 import es.ifp.petprotech.bd.RepositorioSQLite;
 import es.ifp.petprotech.mascotas.model.Mascota;
+import es.ifp.petprotech.medicacion.model.Medicacion;
 
 
 public class MascotasRepositorio extends RepositorioSQLite<Mascota> {
@@ -34,7 +37,7 @@ public class MascotasRepositorio extends RepositorioSQLite<Mascota> {
 
         Mascota mascota = Mascota.nuevaMascota()
             .nombre(notNull(cursor.getString(cursor.getColumnIndexOrThrow(Columnas.NOMBRE))))
-            .fechaNacimiento(extraerFechaNacimiento(segundosEpochNacimiento))
+            .fechaNacimiento(FormatoFechaTiempo.convertirFecha(segundosEpochNacimiento))
             .especie(notNull(cursor.getString(cursor.getColumnIndexOrThrow(Columnas.ESPECIE))))
             .raza(notNull(cursor.getString(cursor.getColumnIndexOrThrow(Columnas.RAZA))))
             .chip(notNull(cursor.getString(cursor.getColumnIndexOrThrow(Columnas.CHIP))))
@@ -62,18 +65,23 @@ public class MascotasRepositorio extends RepositorioSQLite<Mascota> {
         if (nacimiento == null)
             valores.putNull(Columnas.FECHA_NACIMIENTO);
 
-        else valores.put(Columnas.FECHA_NACIMIENTO, segundosEpochNacimiento(nacimiento));
+        else valores.put(Columnas.FECHA_NACIMIENTO, FormatoFechaTiempo.segundosEpoch(nacimiento));
 
         return valores;
     }
 
-    private long segundosEpochNacimiento(LocalDate nacimiento) {
-        return LocalDateTime.of(nacimiento.getYear(),
-                        nacimiento.getMonth(),
-                        nacimiento.getDayOfMonth(),
-                        0,
-                        0)
-                .atZone(ZoneId.systemDefault())
-                .toEpochSecond();
+    @Override
+    protected void antesDeEliminar(Mascota mascota) {
+        Map<Long, List<Medicacion>> medicacionMascota =
+                seleccionarUnoAMuchos(Medicacion.class, new long[]{mascota.getId()});
+
+        List<Medicacion> listadoMedicacion = medicacionMascota.get(mascota.getId());
+
+        if (listadoMedicacion == null)
+            return;
+
+        for (Medicacion medicacion : listadoMedicacion) {
+            getRepositorio(Medicacion.class).eliminar(medicacion);
+        }
     }
 }

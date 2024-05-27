@@ -6,8 +6,11 @@ import android.util.Log;
 import es.ifp.petprotech.centros.datos.ContratoCentrosProfesionales;
 import es.ifp.petprotech.centros.datos.ContratoHorariosCentros;
 import es.ifp.petprotech.centros.datos.ContratoPersonalCentros;
+import es.ifp.petprotech.eventos.datos.ContratoEventos;
 import es.ifp.petprotech.mascotas.datos.ContratoMascotas;
 import es.ifp.petprotech.mascotas.datos.ContratoMascotasVeterinarios;
+import es.ifp.petprotech.medicacion.datos.ContratoMedicacion;
+import es.ifp.petprotech.medicacion.datos.ContratoMedicamentos;
 import es.ifp.petprotech.profesionales.datos.ContratoProfesionales;
 import es.ifp.petprotech.profesionales.datos.ContratoProfesiones;
 import es.ifp.petprotech.profesionales.datos.ContratoProfesionesProfesionales;
@@ -37,6 +40,12 @@ public class Creacion_19_12_23 {
         bd.execSQL(ContratoHorariosCentros.CREAR_TABLA);
         bd.execSQL(ContratoPersonalCentros.CREAR_TABLA);
         bd.execSQL(ContratoHorariosCentros.CREAR_TABLA);
+        // Eventos
+        bd.execSQL(ContratoEventos.CREAR_TABLA);
+        // Medicamentos
+        bd.execSQL(ContratoMedicamentos.CREAR_TABLA);
+        // Medicacion
+        bd.execSQL(ContratoMedicacion.CREAR_TABLA);
 
         Log.d(TAG, "ejecutar: tablas creadas");
     }
@@ -57,5 +66,7 @@ public class Creacion_19_12_23 {
         bd.execSQL(ContratoHorariosCentros.ELIMINAR_TABLA);
         bd.execSQL(ContratoPersonalCentros.ELIMINAR_TABLA);
         bd.execSQL(ContratoHorariosCentros.ELIMINAR_TABLA);
+        // Eventos
+        bd.execSQL(ContratoEventos.ELIMINAR_TABLA);
     }
 }

@@ -1,5 +1,6 @@
 package es.ifp.petprotech.mascotas.viewmodels;
 
+import static es.ifp.petprotech.app.util.StringUtils.notPresent;
 import static es.ifp.petprotech.mascotas.viewmodels.AnadirMascotaViewModel.CamposInfoMascota.CHIP;
 import static es.ifp.petprotech.mascotas.viewmodels.AnadirMascotaViewModel.CamposInfoMascota.FECHA_NACIMIENTO;
 import static es.ifp.petprotech.mascotas.viewmodels.AnadirMascotaViewModel.CamposInfoMascota.NOMBRE;
@@ -19,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import es.ifp.petprotech.R;
-import es.ifp.petprotech.app.datos.FormatoFechaTiempo;
+import es.ifp.petprotech.app.util.FormatoFechaTiempo;
 import es.ifp.petprotech.app.datos.SharedPreferencesRepositorio;
 import es.ifp.petprotech.app.datos.ValidadorInput;
 import es.ifp.petprotech.app.datos.formulario.ValoresFormulario;
@@ -181,9 +182,5 @@ public class AnadirMascotaViewModel extends ViewModel implements ValidadorInput 
         }
 
         return resultado;
-    }
-
-    protected boolean notPresent(String s) {
-        return s == null || s.isBlank();
     }
 }
